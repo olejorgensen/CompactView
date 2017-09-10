@@ -271,7 +271,7 @@ namespace CompactView
 
         public bool Compact(string databaseFile, string password, string newPassword)
         {
-            string connectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword == null ? "" : newPassword);
+            string connectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword ?? "");
             return Tool(databaseFile, password, "Compact", new object[] { connectionStr });
         }
 
@@ -284,7 +284,7 @@ namespace CompactView
 
         public bool Repair(string databaseFile, string password, string newPassword)
         {
-            string connectionStr = password == newPassword ? null : "Data Source=" + databaseFile + "; Password=" + (newPassword == null ? "" : newPassword);
+            string connectionStr = password == newPassword ? null : "Data Source=" + databaseFile + "; Password=" + (newPassword ?? "");
             bool ok = DoRepair(databaseFile, password, new object[] { connectionStr, RepairOption.RecoverAllPossibleRows });
             if (ok) ok = DoRepair(databaseFile, newPassword, new object[] { connectionStr, RepairOption.DeleteCorruptedRows });
             return ok;
@@ -320,7 +320,7 @@ namespace CompactView
 
         public bool Shrink(string databaseFile, string password, string newPassword)
         {
-            string connectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword == null ? "" : newPassword);
+            string connectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword ?? "");
             return Tool(databaseFile, password, "Shrink", null);
         }
 
@@ -335,7 +335,7 @@ namespace CompactView
             OpenConnection(toVersion, databaseFile, password);
             Close();
 
-            string newConnectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword == null ? "" : newPassword);
+            string newConnectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword ?? "");
             string connectionStr = GetConnectionString(databaseFile, password);
 
             try

@@ -233,7 +233,7 @@ public class RichTextBoxHelper
         doc.BeginPrint += new PrintEventHandler(this.Document_BeginPrint);
         doc.EndPrint += new PrintEventHandler(this.Document_EndPrint);
         doc.PrintPage += new PrintPageEventHandler(this.Document_PrintPage);
-        doc.DefaultPageSettings.Margins = margins == null ? new Margins(20, 20, 20, 20) : margins;
+        doc.DefaultPageSettings.Margins = margins ?? new Margins(20, 20, 20, 20);
         doc.DocumentName = "CompactView document";
         this.beforePagePrintDelegate = beforePagePrintDelegate;
 

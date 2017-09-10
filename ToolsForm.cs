@@ -93,7 +93,7 @@ namespace CompactView
         private void LoadDatabase(string fileName, string password)
         {
             tbFileName.Text = fileName;
-            tbPassword.Text = password == null ? "" : password;
+            tbPassword.Text = password ?? "";
             if (db.Open(fileName, password))
             {
                 cbVersion.Text = db.Version.SqlceVersion;
