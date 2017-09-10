@@ -22,15 +22,15 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Printing;
+using System.Drawing.Text;
 using System.IO;
-using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Drawing.Printing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Text;
-using System.Drawing.Imaging;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace CompactView
 {
@@ -52,7 +52,7 @@ namespace CompactView
         {
             InitializeComponent();
 
-            this.Text = formText;
+            Text = formText;
 
             splitterHorizontal.Panel1Collapsed = true;
             sqlParserQuery.RichTextBox = rtbQuery;
@@ -68,11 +68,11 @@ namespace CompactView
         private void LoadSettings()
         {
             settings.Load();
-            this.Left = settings.X >= 0 ? settings.X : 0;
-            this.Top = settings.Y >= 0 ? settings.Y : 0;
-            this.Width = settings.Width >= 580 ? settings.Width : 580;
-            this.Height = settings.Height >= 380 ? settings.Height : 380;
-            this.WindowState = settings.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
+            Left = settings.X >= 0 ? settings.X : 0;
+            Top = settings.Y >= 0 ? settings.Y : 0;
+            Width = settings.Width >= 580 ? settings.Width : 580;
+            Height = settings.Height >= 380 ? settings.Height : 380;
+            WindowState = settings.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
             if (settings.TextColor1 == 0 && settings.TextColor2 == 0 && settings.BackColor1 == 0 && settings.BackColor2 == 0)
             {
                 settings.TextColor1 = Color.Black.ToArgb();
@@ -86,14 +86,14 @@ namespace CompactView
 
         private void SaveSettings()
         {
-            if (this.WindowState != FormWindowState.Maximized)
+            if (WindowState != FormWindowState.Maximized)
             {
-                settings.X = this.Left >= 0 ? this.Left : 0;
-                settings.Y = this.Top >= 0 ? this.Top : 0;
-                settings.Width = this.Width >= 580 ? this.Width : 580;
-                settings.Height = this.Height >= 380 ? this.Height : 380;
+                settings.X = Left >= 0 ? Left : 0;
+                settings.Y = Top >= 0 ? Top : 0;
+                settings.Width = Width >= 580 ? Width : 580;
+                settings.Height = Height >= 380 ? Height : 380;
             }
-            settings.Maximized = this.WindowState == FormWindowState.Maximized;
+            settings.Maximized = WindowState == FormWindowState.Maximized;
             settings.Save();
         }
 
@@ -224,11 +224,11 @@ namespace CompactView
                 if (!File.Exists(fileName))
                     throw new Exception($"{GlobalText.GetValue("FileNotFound")}: '{fileName}'");
 
-                this.Cursor = Cursors.WaitCursor;
+                Cursor = Cursors.WaitCursor;
 
                 if (db.Open(fileName, password))
                 {
-                    this.Text = string.Concat(formText, " - ", db.FileName);
+                    Text = string.Concat(formText, " - ", db.FileName);
 
                     // Fill tree with database name and table names
                     treeDb.BeginUpdate();
@@ -261,7 +261,7 @@ namespace CompactView
                 settings.RemoveFromRecentFiles(fileName);
                 UpdateRecentFilesMenu();
             }
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             UpdateStatus();
         }
@@ -283,7 +283,7 @@ namespace CompactView
                 exportMenuItem.Enabled = saveSchemaMenuItem.Enabled = saveSqlMenuItem.Enabled = closeDatabaseMenuItem.Enabled =
                 loadSqlMenuItem.Enabled = printMenuItem.Enabled = previewMenuItem.Enabled = false;
             splitterHorizontal.Panel1Collapsed = splitterHorizontal.IsSplitterFixed = true;
-            this.Text = formText;
+            Text = formText;
             tabControl1.SelectedIndex = 0;
         }
 

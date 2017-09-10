@@ -18,11 +18,11 @@ along with CompactView.  If not, see <http://www.gnu.org/licenses/>.
 
 CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
-using System.Text;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Data;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 
 

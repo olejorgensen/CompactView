@@ -20,14 +20,14 @@ CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
 using System;
 using System.Text;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace CompactView
 {
     public class SqlParser
     {
-        private string[] keywords = { "action", "add", "all", "alter", "and", "any", "as", "asc", "authorization", "avg", "backup", "begin", "between", "break", "browse", "bulk", "by", "cascade", 
+        private string[] keywords = { "action", "add", "all", "alter", "and", "any", "as", "asc", "authorization", "avg", "backup", "begin", "between", "break", "browse", "bulk", "by", "cascade",
                                   "case", "check", "checkpoint", "close", "clustered", "coalesce", "collate", "column", "commit", "compute", "constraint", "contains", "containstable",
                                   "continue", "convert", "count", "create", "cross", "current", "current_date", "current_time", "current_timestamp", "current_user", "cursor",
                                   "database", "databasepassword", "dateadd", "datediff", "datename", "datepart", "dbcc", "deallocate", "declare", "default", "delete", "deny", "desc",
@@ -59,14 +59,16 @@ namespace CompactView
         public SqlParser()
         {
             var pattern = new StringBuilder(@"(?<A>\b(");
-            foreach (string key in keywords) pattern.Append($"{key}|");
+            foreach (string key in keywords)
+                pattern.Append($"{key}|");
             pattern.Length--;
             pattern.Append(@")\b)");
             regexKeywords = new Regex(pattern.ToString(), RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
             pattern.Clear();
             pattern.Append(@"(?<A>\b(");
-            foreach (string typ in types) pattern.Append($"{typ}|");
+            foreach (string typ in types)
+                pattern.Append($"{typ}|");
             pattern.Length--;
             pattern.Append(@")\b)");
             regexTypes = new Regex(pattern.ToString(), RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
@@ -82,7 +84,8 @@ namespace CompactView
 
         public string Parse(string text)
         {
-            if (_RichTextBox != null && _RichTextBox.Font != richTextBoxAux.Font) richTextBoxAux.Font = _RichTextBox.Font;
+            if (_RichTextBox != null && _RichTextBox.Font != richTextBoxAux.Font)
+                richTextBoxAux.Font = _RichTextBox.Font;
             richTextBoxAux.Clear();
             richTextBoxAux.Text = text;
             richTextBoxAux.SelectAll();
@@ -92,8 +95,10 @@ namespace CompactView
             rtf = regexKeywords.Replace(rtf, @"\cf3 ${A}\cf0 ");
             rtf = regexTypes.Replace(rtf, @"\cf4 ${A}\cf0 ");
             rtf = regexStrings.Replace(rtf, @"\cf2 ${A}\cf0 ");
-            while (regexKeysQuoted.IsMatch(rtf)) rtf = regexKeysQuoted.Replace(rtf, "${A}${B}${D}${F}");
-            while (regexKeysBrackets.IsMatch(rtf)) rtf = regexKeysBrackets.Replace(rtf, "${A}${B}${D}${F}");
+            while (regexKeysQuoted.IsMatch(rtf))
+                rtf = regexKeysQuoted.Replace(rtf, "${A}${B}${D}${F}");
+            while (regexKeysBrackets.IsMatch(rtf))
+                rtf = regexKeysBrackets.Replace(rtf, "${A}${B}${D}${F}");
 
             return rtf;
         }
@@ -107,7 +112,8 @@ namespace CompactView
 
             set
             {
-                if (value == _RichTextBox) return;
+                if (value == _RichTextBox)
+                    return;
                 if (_RichTextBox != null)
                 {
                     _RichTextBox.VScroll -= RichTextBox_Event;
@@ -130,7 +136,8 @@ namespace CompactView
 
         public void ParseRichTextBox(int posIniChar, int posEndChar)
         {
-            if (exit) return;
+            if (exit)
+                return;
             exit = true;
 
             int firstVisibleLineBefore = _RichTextBox.GetFirstVisibleLine();

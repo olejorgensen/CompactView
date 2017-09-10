@@ -19,8 +19,8 @@ along with CompactView.  If not, see <http://www.gnu.org/licenses/>.
 CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
 using System;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 
 namespace CompactView
 {
@@ -54,7 +54,7 @@ namespace CompactView
 
         private void SetCultureTexts()
         {
-            this.Text = GlobalText.GetValue("Tools");
+            Text = GlobalText.GetValue("Tools");
             groupBox1.Text = GlobalText.GetValue("Database");
             label1.Text = $"{GlobalText.GetValue("FileName")}:";
             label2.Text = $"{GlobalText.GetValue("Password")}:";
@@ -157,7 +157,7 @@ namespace CompactView
         private void btCreate_Click(object sender, EventArgs e)
         {
             bool ok = false;
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.CreateDatabase(tbFileName.Text, tbPassword.Text.Trim(), (Version)cbVersion.SelectedItem);
@@ -170,7 +170,7 @@ namespace CompactView
             {
                 GlobalText.ShowError("CreateError", ex.Message);
             }
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             if (ok)
                 LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
@@ -183,7 +183,7 @@ namespace CompactView
                 return;
 
             bool ok = false;
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Compact(tbFileName.Text, openPassword, tbPassword.Text.Trim());
@@ -196,7 +196,7 @@ namespace CompactView
             {
                 GlobalText.ShowError("CompactError", ex.Message);
             }
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             if (ok)
                 LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
@@ -209,7 +209,7 @@ namespace CompactView
                 return;
 
             bool ok = false;
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Repair(tbFileName.Text, openPassword, tbPassword.Text.Trim());
@@ -222,7 +222,7 @@ namespace CompactView
             {
                 GlobalText.ShowError("RepairError", ex.Message);
             }
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             if (ok)
                 LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
@@ -235,7 +235,7 @@ namespace CompactView
                 return;
 
             bool ok = false;
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Shrink(tbFileName.Text, openPassword, tbPassword.Text.Trim());
@@ -248,7 +248,7 @@ namespace CompactView
             {
                 GlobalText.ShowError("ShrinkError", ex.Message);
             }
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             if (ok)
                 LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
@@ -262,7 +262,7 @@ namespace CompactView
                 return;
 
             bool ok = false;
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Upgrade(tbFileName.Text, openPassword, tbPassword.Text.Trim(), (Version)cbUpgradeTo.SelectedItem);
@@ -275,7 +275,7 @@ namespace CompactView
             {
                 GlobalText.ShowError("UpgradeError", ex.Message);
             }
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             if (ok)
                 LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
@@ -284,7 +284,7 @@ namespace CompactView
 
         private void btVerify_Click(object sender, EventArgs e)
         {
-            this.Cursor = Cursors.WaitCursor;
+            Cursor = Cursors.WaitCursor;
             try
             {
                 if (db.Verify(tbFileName.Text, tbPassword.Text.Trim()))
@@ -299,7 +299,7 @@ namespace CompactView
                 GlobalText.ShowError("VerifyError", ex.Message);
             }
             db.Close();
-            this.Cursor = Cursors.Default;
+            Cursor = Cursors.Default;
 
             LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
         }

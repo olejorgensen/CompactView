@@ -18,10 +18,10 @@ along with CompactView.  If not, see <http://www.gnu.org/licenses/>.
 
 CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
-using System;
 using System.Reflection;
-using System.Windows.Forms;
 using System.Threading;
+using System.Windows.Forms;
+
 namespace CompactView
 {
     partial class AboutBox1 : Form
@@ -29,7 +29,7 @@ namespace CompactView
         public AboutBox1()
         {
             InitializeComponent();
-            this.Text = $"{GlobalText.GetValue("About")} {AssemblyTitle}";
+            Text = $"{GlobalText.GetValue("About")} {AssemblyTitle}";
             labelProductName.Text = AssemblyProduct;
             labelVersion.Text = $"{GlobalText.GetValue("Version")} {AssemblyVersion}";
             labelCopyright.Text = AssemblyCopyright;
@@ -38,7 +38,8 @@ namespace CompactView
             labelLanguage.Text = Thread.CurrentThread.CurrentUICulture.Name;
             string s = GlobalText.GetValue("TranslationInfo");
             labelTranslationInfo.Text = $"{s}.";
-            if (s == "English translation by Iván Costales Suárez (CompactView)") tableLayoutPanel.RowStyles[5].Height = 0;
+            if (s == "English translation by Iván Costales Suárez (CompactView)")
+                tableLayoutPanel.RowStyles[5].Height = 0;
         }
 
         #region Assembly Attribute Accessors

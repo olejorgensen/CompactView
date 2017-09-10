@@ -57,7 +57,7 @@ namespace CompactView
 
         private void SetCultureTexts()
         {
-            this.Text = GlobalText.GetValue("Options");
+            Text = GlobalText.GetValue("Options");
             groupBox1.Text = GlobalText.GetValue("Colors");
             label6.Text = GlobalText.GetValue("FontColor");
             label5.Text = GlobalText.GetValue("BackgroundColor");
@@ -74,7 +74,8 @@ namespace CompactView
 
         private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (dataGrid == null) return;
+            if (dataGrid == null)
+                return;
             label1.BackColor = label3.BackColor = dataGrid.DefaultCellStyle.BackColor = cbBackground1.ForeColor;
             label2.BackColor = label4.BackColor = dataGrid.AlternatingRowsDefaultCellStyle.BackColor = cbBackground2.ForeColor;
             label1.ForeColor = label3.ForeColor = dataGrid.DefaultCellStyle.ForeColor = cbFont1.ForeColor;
@@ -109,13 +110,15 @@ namespace CompactView
         {
             colorDialog1.Color = comboBox.ForeColor;
             int[] custom = new int[10];
-            for (int i = 0; i < 10; i++) custom[i] = ColorToWinColor(Color.White);
+            for (int i = 0; i < 10; i++)
+                custom[i] = ColorToWinColor(Color.White);
             custom[0] = ColorToWinColor(cbFont1.ForeColor);
             custom[8] = ColorToWinColor(cbFont2.ForeColor);
             custom[1] = ColorToWinColor(cbBackground1.ForeColor);
             custom[9] = ColorToWinColor(cbBackground2.ForeColor);
             colorDialog1.CustomColors = custom;
-            if (colorDialog1.ShowDialog() != DialogResult.OK) return;
+            if (colorDialog1.ShowDialog() != DialogResult.OK)
+                return;
             ColorComboBox.SetectColor(comboBox, colorDialog1.Color);
             comboBox_SelectedIndexChanged(comboBox, null);
         }
@@ -144,7 +147,8 @@ namespace CompactView
         {
             // Move up the form to allow combo boxes dropped down
             int mainTop = Application.OpenForms[0].Top + 90;
-            if (Top > mainTop) Top = mainTop;
+            if (Top > mainTop)
+                Top = mainTop;
         }
 
         public static void SelectColors(DataGridView dataGrid, Settings settings, int index)
@@ -156,7 +160,7 @@ namespace CompactView
 
             switch (index)
             {
-                case 0: 
+                case 0:
                     break;
                 case 1:
                     cFont1 = Color.Black;
@@ -199,7 +203,8 @@ namespace CompactView
         private void cbColorSet_SelectedIndexChanged(object sender, EventArgs e)
         {
             groupBox2.Enabled = cbColorSet.SelectedIndex == 5;
-            if (dataGrid == null) return;
+            if (dataGrid == null)
+                return;
             SelectColors(dataGrid, settings, cbColorSet.SelectedIndex);
             label1.BackColor = label3.BackColor = dataGrid.DefaultCellStyle.BackColor;
             label2.BackColor = label4.BackColor = dataGrid.AlternatingRowsDefaultCellStyle.BackColor;

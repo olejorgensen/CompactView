@@ -20,11 +20,11 @@ CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Data.Common;
-using System.Data;
-using System.IO;
 using System.Text.RegularExpressions;
 
 namespace CompactView
@@ -112,20 +112,23 @@ namespace CompactView
                 foreach (Version ver in AvailableVersions.Reverse<Version>())
                 {
                     ok = OpenConnection(ver, databaseFile, password);
-                    if (ok || BadPassword) break;
+                    if (ok || BadPassword)
+                        break;
                 }
             }
             else
             {
                 ok = OpenConnection(version, databaseFile, password);
-                if (!ok && (!BadPassword || password != null)) GlobalText.ShowError("UnableToOpen", LastError);
+                if (!ok && (!BadPassword || password != null))
+                    GlobalText.ShowError("UnableToOpen", LastError);
             }
             return ok;
         }
 
         public void Close()
         {
-            if (Connection != null && Connection.State != ConnectionState.Closed) Connection.Close();
+            if (Connection != null && Connection.State != ConnectionState.Closed)
+                Connection.Close();
             Connection = null;
             Version = null;
             LastError = string.Empty;
@@ -146,12 +149,14 @@ namespace CompactView
 
         private DataTable _databaseInfo;
 
-        public DataTable DatabaseInfo        
+        public DataTable DatabaseInfo
         {
             get
             {
-                if (_databaseInfo != null) return _databaseInfo;
-                if (Connection == null) return null;
+                if (_databaseInfo != null)
+                    return _databaseInfo;
+                if (Connection == null)
+                    return null;
                 _databaseInfo = new DataTable();
                 _databaseInfo.Columns.Add("Property");
                 _databaseInfo.Columns.Add("Value");
@@ -162,7 +167,8 @@ namespace CompactView
                 try
                 {
                     var dbInfo = (List<KeyValuePair<string, string>>)Connection.GetType().InvokeMember("GetDatabaseInfo", BindingFlags.InvokeMethod, null, Connection, null);
-                    foreach (KeyValuePair<string, string> key in dbInfo) _databaseInfo.Rows.Add(System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(key.Key), key.Value);
+                    foreach (KeyValuePair<string, string> key in dbInfo)
+                        _databaseInfo.Rows.Add(System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(key.Key), key.Value);
                 }
                 catch
                 {
@@ -200,7 +206,8 @@ namespace CompactView
         {
             string[] size = { "Bytes", "KB", "MB", "GB", "TB" };
             int log = (int)Math.Log(0.1 + bytes, 1024);
-            if (log > 4) log = 4;
+            if (log > 4)
+                log = 4;
             double n = bytes / Math.Pow(1024, log);
             return $"{n:N0} {size[log]}";
         }
@@ -211,10 +218,12 @@ namespace CompactView
         {
             get
             {
-                if (_tableNames != null) return _tableNames;
+                if (_tableNames != null)
+                    return _tableNames;
                 _tableNames = new List<string>();
                 DbDataReader dr = ExecuteReader("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = N'TABLE'");
-                while (dr.Read()) _tableNames.Add(dr.GetString(0));
+                while (dr.Read())
+                    _tableNames.Add(dr.GetString(0));
                 dr.Close();
                 return _tableNames;
             }
@@ -222,7 +231,8 @@ namespace CompactView
 
         protected void ResetTableNames()
         {
-            if (_tableNames != null) _tableNames.Clear();
+            if (_tableNames != null)
+                _tableNames.Clear();
             _tableNames = null;
         }
 
@@ -230,8 +240,10 @@ namespace CompactView
 
         public object ExecuteSql(string sql, bool updatable)
         {
-            if (Connection == null) return null;
-            if (Connection.State == ConnectionState.Closed) Connection.Open();
+            if (Connection == null)
+                return null;
+            if (Connection.State == ConnectionState.Closed)
+                Connection.Open();
             LastError = string.Empty;
 
             object command = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeCommand", false, BindingFlags.CreateInstance, null, new object[] { null, Connection }, null, null);
@@ -241,7 +253,8 @@ namespace CompactView
             object result = null;
             QueryCount = 0;
 
-            for (Match m = regexSemicolon.Match(sql); m.Success; m = m.NextMatch()) if (!string.IsNullOrWhiteSpace(m.Value))
+            for (Match m = regexSemicolon.Match(sql); m.Success; m = m.NextMatch())
+                if (!string.IsNullOrWhiteSpace(m.Value))
                 {
                     QueryCount++;
                     try
@@ -249,7 +262,8 @@ namespace CompactView
                         command.GetType().InvokeMember("CommandText", BindingFlags.SetProperty, null, command, new object[] { m.Value.Trim() });
                         object resultset = command.GetType().GetMethod("ExecuteResultSet", new System.Type[] { enumType }, null).Invoke(command, new object[] { options });
                         bool scrollable = (bool)resultset.GetType().InvokeMember("Scrollable", BindingFlags.GetProperty, null, resultset, null);
-                        if (scrollable) result = resultset;
+                        if (scrollable)
+                            result = resultset;
                     }
                     catch (Exception e)
                     {
@@ -283,18 +297,20 @@ namespace CompactView
         {
             string connectionStr = password == newPassword ? null : $"Data Source={databaseFile}; Password={(newPassword ?? string.Empty)}";
             bool ok = DoRepair(databaseFile, password, new object[] { connectionStr, RepairOption.RecoverAllPossibleRows });
-            if (ok) ok = DoRepair(databaseFile, newPassword, new object[] { connectionStr, RepairOption.DeleteCorruptedRows });
+            if (ok)
+                ok = DoRepair(databaseFile, newPassword, new object[] { connectionStr, RepairOption.DeleteCorruptedRows });
             return ok;
         }
 
         private bool DoRepair(string databaseFile, string password, object[] parameters)
         {
             Close();
-            if (!Open(databaseFile, password)) return false;
+            if (!Open(databaseFile, password))
+                return false;
             Close();
 
             string connectionStr = GetConnectionString(databaseFile, password);
-            
+
             try
             {
                 object engine = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeEngine", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
@@ -356,7 +372,8 @@ namespace CompactView
         public bool Verify(string databaseFile, string password)
         {
             Close();
-            if (!Open(databaseFile, password)) return false;
+            if (!Open(databaseFile, password))
+                return false;
             Close();
 
             string connectionStr = GetConnectionString(databaseFile, password);
@@ -396,8 +413,10 @@ namespace CompactView
             Close();
 
             string connectionStr = $"Data Source={databaseFile}";
-            if (!string.IsNullOrEmpty(password)) connectionStr += $"; Password={password}; Encrypt=TRUE";
-            if (lcid != int.MinValue) connectionStr += $"; LCID={lcid}";
+            if (!string.IsNullOrEmpty(password))
+                connectionStr += $"; Password={password}; Encrypt=TRUE";
+            if (lcid != int.MinValue)
+                connectionStr += $"; LCID={lcid}";
             try
             {
                 object engine = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeEngine", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
@@ -431,11 +450,12 @@ namespace CompactView
         private bool Tool(string databaseFile, string password, string tool, object[] parameters)
         {
             Close();
-            if (!Open(databaseFile, password)) return false;
+            if (!Open(databaseFile, password))
+                return false;
             Close();
 
             string connectionStr = GetConnectionString(databaseFile, password);
-            
+
             try
             {
                 object engine = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeEngine", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
@@ -476,12 +496,14 @@ namespace CompactView
                     return false;
                 }
             }
-            if (assembly == null) return false;
+            if (assembly == null)
+                return false;
 
             try
             {
                 Connection = (DbConnection)assembly.CreateInstance("System.Data.SqlServerCe.SqlCeConnection", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
-                if (Connection == null) return false;
+                if (Connection == null)
+                    return false;
                 Connection.Open();
                 Version = version;
                 return true;
@@ -499,10 +521,15 @@ namespace CompactView
                 }
                 switch (nativeError)
                 {
-                    case 25138: break;  // Old database version that needs to be upgraded
-                    case 25028: BadPassword = true;  break;  // Bad password
-                    case 28609: break;  // Incorrect version of database, more recent than expected
-                    default   : throw (e);
+                    case 25138:
+                        break;  // Old database version that needs to be upgraded
+                    case 25028:
+                        BadPassword = true;
+                        break;  // Bad password
+                    case 28609:
+                        break;  // Incorrect version of database, more recent than expected
+                    default:
+                        throw (e);
                 }
                 LastError = e.Message;
                 return false;
@@ -513,7 +540,8 @@ namespace CompactView
         {
             string connectionStr = $"Data Source=\"{databaseFile}\"; Max Database Size=4091";
             // Maximum 4 Gb (with value 4096 the program is not able to open databases above 2045 Mb)
-            if (!string.IsNullOrEmpty(password)) connectionStr += $"; Password=\"{password}\"";
+            if (!string.IsNullOrEmpty(password))
+                connectionStr += $"; Password=\"{password}\"";
 
             bool readOnly = false;
             try
@@ -524,7 +552,8 @@ namespace CompactView
             catch
             {
             }
-            if (readOnly) connectionStr += $"; Mode=Read Only; Temp Path=\"{Path.GetTempPath()}\"";
+            if (readOnly)
+                connectionStr += $"; Mode=Read Only; Temp Path=\"{Path.GetTempPath()}\"";
 
             return connectionStr;
         }

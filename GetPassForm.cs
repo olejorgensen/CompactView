@@ -29,13 +29,13 @@ namespace CompactView
             InitializeComponent();
             SetCultureTexts();
 
-            this.ActiveControl = edPass;
+            ActiveControl = edPass;
             btOK.Focus();
         }
 
         private void SetCultureTexts()
         {
-            this.Text = GlobalText.GetValue("Password");
+            Text = GlobalText.GetValue("Password");
             label1.Text = GlobalText.GetValue("PasswordNote");
             btOK.Text = GlobalText.GetValue("Ok");
             btCancel.Text = GlobalText.GetValue("Cancel");

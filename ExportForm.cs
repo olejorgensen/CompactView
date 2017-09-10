@@ -21,13 +21,13 @@ CompactView web site <http://sourceforge.net/p/compactview/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
-using System.IO;
 using System.Text.RegularExpressions;
-using System.Globalization;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace CompactView
 {
@@ -44,21 +44,24 @@ namespace CompactView
 
             db = sqlCeDb;
             this.dbNode = dbNode;
-            if (dbNode.ImageIndex == 1) saveFileDialog1.Filter = saveFileDialog1.Filter.Replace("All files|*.*", "CSV files|*.csv|All files|*.*");
+            if (dbNode.ImageIndex == 1)
+                saveFileDialog1.Filter = saveFileDialog1.Filter.Replace("All files|*.*", "CSV files|*.csv|All files|*.*");
             int nItems = FillTreeDb();
 
             int maxHeight = Screen.PrimaryScreen.WorkingArea.Height - 20;
             int height = nItems * treeDb.ItemHeight + 90;
-            if (height < 400) height = 400;
-            if (height > maxHeight) height = maxHeight;
-            this.Height = height;
+            if (height < 400)
+                height = 400;
+            if (height > maxHeight)
+                height = maxHeight;
+            Height = height;
 
             var doubleClickIntercept = new DoubleClickIntercept(treeDb.Handle);  // Disable double click to avoid TreeView double click check bug
         }
 
         private void SetCultureTexts()
         {
-            this.Text = GlobalText.GetValue("Export");
+            Text = GlobalText.GetValue("Export");
             btnExport.Text = GlobalText.GetValue("Export");
             rbAll.Text = GlobalText.GetValue("All");
             rbSchema.Text = GlobalText.GetValue("OnlySchema");
@@ -77,22 +80,27 @@ namespace CompactView
         private int GetTotalNodes(TreeNodeCollection nodes)
         {
             int rootNodes = nodes.Count;
-            foreach (TreeNode node in nodes) rootNodes += this.GetTotalNodes(node.Nodes);
-            return rootNodes ;
+            foreach (TreeNode node in nodes)
+                rootNodes += GetTotalNodes(node.Nodes);
+            return rootNodes;
         }
 
         private void RemoveTable(List<string> ddl, string tableName)
         {
             int pos = ddl.FindIndex(cmd => cmd.StartsWith($"CREATE TABLE [{tableName}]"));
-            if (pos >= 0) ddl.RemoveAt(pos);
+            if (pos >= 0)
+                ddl.RemoveAt(pos);
 
-            while ((pos = ddl.FindIndex(cmd => cmd.StartsWith($"ALTER TABLE [{tableName}]"))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => cmd.StartsWith($"ALTER TABLE [{tableName}]"))) >= 0)
+                ddl.RemoveAt(pos);
 
             string pattern = $@"^CREATE.* INDEX.* ON \[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^ALTER TABLE.* ADD CONSTRAINT.* FOREIGN KEY.* REFERENCES \[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
         }
 
         private void RemoveField(List<string> ddl, string tableName, string fieldName)
@@ -105,16 +113,20 @@ namespace CompactView
             }
 
             string pattern = $@"^ALTER TABLE \[{tableName}\].* PRIMARY KEY (.*\[{fieldName}\].*)";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^CREATE.* INDEX.* ON \[{tableName}\] \(.*\[{fieldName}\].*\)";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^ALTER TABLE \[{tableName}\] ADD CONSTRAINT.* FOREIGN KEY \(.*\[{fieldName}\].*\)";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^ALTER TABLE.* ADD CONSTRAINT.* FOREIGN KEY.* REFERENCES \[{tableName}\] \(.*\[{fieldName}\].*\)";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
         }
 
         private string RemoveUncheck(List<string> ddl, TreeView treeView)
@@ -123,7 +135,9 @@ namespace CompactView
             {
                 if (node.Checked)
                 {
-                    foreach (TreeNode n in node.Nodes) if (!n.Checked) RemoveField(ddl, node.Text, n.Text);
+                    foreach (TreeNode n in node.Nodes)
+                        if (!n.Checked)
+                            RemoveField(ddl, node.Text, n.Text);
                 }
                 else
                 {
@@ -132,21 +146,26 @@ namespace CompactView
             }
 
             var sb = new StringBuilder();
-            foreach (string s in ddl) sb.AppendLine($"{s};{Environment.NewLine}");
+            foreach (string s in ddl)
+                sb.AppendLine($"{s};{Environment.NewLine}");
             return sb.ToString();
         }
 
         private string GetExportTablesSchema(SqlCeDb db, TreeView treeView)
         {
             var ddl = new List<string>(Regex.Split(db.GetDatabaseDdl(), @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
-            for (int i = ddl.Count - 1; i >= 0; i--) if (!ddl[i].StartsWith("CREATE TABLE ")) ddl.RemoveAt(i);
+            for (int i = ddl.Count - 1; i >= 0; i--)
+                if (!ddl[i].StartsWith("CREATE TABLE "))
+                    ddl.RemoveAt(i);
             return RemoveUncheck(ddl, treeView);
         }
 
         private string GetExportConstraintsSchema(SqlCeDb db, TreeView treeView)
         {
             var ddl = new List<string>(Regex.Split(db.GetDatabaseDdl(), @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
-            for (int i = ddl.Count - 1; i >= 0; i--) if (ddl[i].StartsWith("CREATE TABLE ")) ddl.RemoveAt(i);
+            for (int i = ddl.Count - 1; i >= 0; i--)
+                if (ddl[i].StartsWith("CREATE TABLE "))
+                    ddl.RemoveAt(i);
             return RemoveUncheck(ddl, treeView);
         }
 
@@ -157,12 +176,15 @@ namespace CompactView
             {
                 string identity = null;
                 Match match = Regex.Match(ddl[i], @"(?<=^CREATE TABLE \[)[^\]]*(?=\])", RegexOptions.Singleline);
-                if (match.Success) identity = db.GetAutoincNext(match.Value);
-                if (identity != null) ddl[i] = Regex.Replace(ddl[i], @"(?<=\r\n\ *\[.*\].* IDENTITY \()\d+(?=,)", identity, RegexOptions.Singleline);
+                if (match.Success)
+                    identity = db.GetAutoincNext(match.Value);
+                if (identity != null)
+                    ddl[i] = Regex.Replace(ddl[i], @"(?<=\r\n\ *\[.*\].* IDENTITY \()\d+(?=,)", identity, RegexOptions.Singleline);
             }
 
             var sb = new StringBuilder();
-            foreach (string s in ddl) sb.AppendLine($"{s};{Environment.NewLine}");
+            foreach (string s in ddl)
+                sb.AppendLine($"{s};{Environment.NewLine}");
             return sb.ToString();
         }
 
@@ -174,19 +196,22 @@ namespace CompactView
             {
                 var sb = new StringBuilder();
                 int count = 0;
-                if (node.Checked) foreach (TreeNode n in node.Nodes)
-                {
-                    if (n.Checked)
+                if (node.Checked)
+                    foreach (TreeNode n in node.Nodes)
                     {
-                        sb.Append($"[{n.Text}], ");
-                        count++;
+                        if (n.Checked)
+                        {
+                            sb.Append($"[{n.Text}], ");
+                            count++;
+                        }
                     }
-                }
-                if (count == 0) continue;
+                if (count == 0)
+                    continue;
 
                 string schema = db.GetTableDdl(node.Text, true, false, false, false);
                 string identity = db.GetAutoincNext(node.Text);
-                if (identity != null) ddl.AppendLine($"SET IDENTITY_INSERT [{node.Text}] ON;{Environment.NewLine}");
+                if (identity != null)
+                    ddl.AppendLine($"SET IDENTITY_INSERT [{node.Text}] ON;{Environment.NewLine}");
 
                 string fields = sb.ToString().TrimEnd(',', ' ');
                 string sqlSelect = $"SELECT {fields} FROM [{node.Text}]";
@@ -225,13 +250,15 @@ namespace CompactView
                             Thread.CurrentThread.CurrentCulture = ci;
                         }
                         ddl.Append(s);
-                        if (i < count - 1) ddl.Append(", ");
+                        if (i < count - 1)
+                            ddl.Append(", ");
                     }
                     ddl.AppendLine($");{Environment.NewLine}");
                 }
                 dr.Close();
 
-                if (identity != null) ddl.AppendLine($"SET IDENTITY_INSERT [{node.Text}] OFF;{Environment.NewLine}");
+                if (identity != null)
+                    ddl.AppendLine($"SET IDENTITY_INSERT [{node.Text}] OFF;{Environment.NewLine}");
             }
             return ddl.ToString();
         }
@@ -239,8 +266,11 @@ namespace CompactView
         private string GetCsvExportData(SqlCeDb db, TreeView treeView, bool titles, bool data)
         {
             int ncount = 0;
-            foreach (TreeNode node in treeView.Nodes) if (node.Checked) ncount++;
-            if (ncount != 1) return null;
+            foreach (TreeNode node in treeView.Nodes)
+                if (node.Checked)
+                    ncount++;
+            if (ncount != 1)
+                return null;
 
             var csv = new StringBuilder();
 
@@ -249,18 +279,22 @@ namespace CompactView
                 var sb = new StringBuilder();
                 var sbTitles = new StringBuilder();
                 int count = 0;
-                if (node.Checked) foreach (TreeNode n in node.Nodes)
-                {
-                    if (n.Checked)
+                if (node.Checked)
+                    foreach (TreeNode n in node.Nodes)
                     {
-                        sbTitles.Append($"\"{n.Text}\",");
-                        sb.Append($"[{n.Text}], ");
-                        count++;
+                        if (n.Checked)
+                        {
+                            sbTitles.Append($"\"{n.Text}\",");
+                            sb.Append($"[{n.Text}], ");
+                            count++;
+                        }
                     }
-                }
-                if (count == 0) continue;
-                if (titles) csv.AppendLine(sbTitles.ToString().TrimEnd(','));
-                if (!data) continue;
+                if (count == 0)
+                    continue;
+                if (titles)
+                    csv.AppendLine(sbTitles.ToString().TrimEnd(','));
+                if (!data)
+                    continue;
 
                 string fields = sb.ToString().TrimEnd(',', ' ');
                 string sqlSelect = $"SELECT {fields} FROM [{node.Text}]";
@@ -298,7 +332,8 @@ namespace CompactView
                             Thread.CurrentThread.CurrentCulture = ci;
                         }
                         csv.Append($"\"{s}\"");
-                        if (i < count - 1) csv.Append(",");
+                        if (i < count - 1)
+                            csv.Append(",");
                     }
                     csv.AppendLine();
                 }
@@ -315,7 +350,8 @@ namespace CompactView
                 string s = dbNode.ImageIndex == 0 ? string.Empty : $"_{dbNode.Text}";
                 saveFileDialog1.FileName = $"{Path.GetFileNameWithoutExtension(db.FileName)}{s}_export.sql";
             }
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
 
             var writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
             if (dbNode.ImageIndex == 1 && saveFileDialog1.FilterIndex == 3)  // CSV
@@ -327,18 +363,24 @@ namespace CompactView
                 if (rbAll.Checked || rbSchema.Checked)
                 {
                     string ddl = GetExportTablesSchema(db, treeDb);
-                    if (rbAll.Checked) writer.Write(ChangeIdentity(ddl)); else writer.Write(ddl);
+                    if (rbAll.Checked)
+                        writer.Write(ChangeIdentity(ddl));
+                    else
+                        writer.Write(ddl);
                 }
-                if (rbAll.Checked || rbData.Checked) writer.Write(GetExportData(db, treeDb));
-                if (rbAll.Checked || rbSchema.Checked) writer.Write(GetExportConstraintsSchema(db, treeDb));
+                if (rbAll.Checked || rbData.Checked)
+                    writer.Write(GetExportData(db, treeDb));
+                if (rbAll.Checked || rbSchema.Checked)
+                    writer.Write(GetExportConstraintsSchema(db, treeDb));
             }
             writer.Close();
-            this.Close();
+            Close();
         }
 
         private void treeDb_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            foreach (TreeNode node in e.Node.Nodes) node.Checked = e.Node.Checked;
+            foreach (TreeNode node in e.Node.Nodes)
+                node.Checked = e.Node.Checked;
 
             if (e.Node.Checked && e.Node.Parent != null)
             {
@@ -360,13 +402,18 @@ namespace CompactView
 
         private void treeDb_BeforeCheck(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node.Parent == null || !e.Node.Checked) return;
+            if (e.Node.Parent == null || !e.Node.Checked)
+                return;
             TreeNode[] nodes = treeDb.Nodes.Find($"{e.Node.Parent.Text}@{e.Node.Text}", true);
-            if (nodes.Length <= 0 || nodes[0].Parent == null) return;
+            if (nodes.Length <= 0 || nodes[0].Parent == null)
+                return;
 
             bool used = false;
-            for (int i = 0; i < nodes.Length; i++) if (nodes[i].Checked) used = true;
-            if (!used) return;
+            for (int i = 0; i < nodes.Length; i++)
+                if (nodes[i].Checked)
+                    used = true;
+            if (!used)
+                return;
 
             string txt = $"[{e.Node.Parent.Text}]-[{e.Node.Text}] {GlobalText.GetValue("UsedAsAForeignKey")}{Environment.NewLine}[{nodes[0].Parent.Text}]-[{nodes[0].Text}].";
             GlobalText.ShowWarning(txt);
@@ -377,14 +424,17 @@ namespace CompactView
     {
         public DoubleClickIntercept(IntPtr hWnd)
         {
-            this.AssignHandle(hWnd);
+            AssignHandle(hWnd);
         }
 
         protected override void WndProc(ref Message m)
         {
             const int WM_LBUTTONDBLCLK = 0x203;
 
-            if (m.Msg == WM_LBUTTONDBLCLK) m.Result = IntPtr.Zero; else base.WndProc(ref m);
+            if (m.Msg == WM_LBUTTONDBLCLK)
+                m.Result = IntPtr.Zero;
+            else
+                base.WndProc(ref m);
         }
     }
 }

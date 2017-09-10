@@ -21,11 +21,11 @@ CompactView web site <http://sourceforge.net/p/compactview/>.
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Windows.Forms;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Data.Common;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace CompactView
 {
@@ -48,7 +48,7 @@ namespace CompactView
 
         private void SetCultureTexts()
         {
-            this.Text = GlobalText.GetValue("Import");
+            Text = GlobalText.GetValue("Import");
             btnImport.Text = GlobalText.GetValue("Import");
             cbSchema.Text = GlobalText.GetValue("Schema");
             cbData.Text = GlobalText.GetValue("Data");
@@ -65,7 +65,8 @@ namespace CompactView
             var reader = new StreamReader(fileName);
             ddl = new List<string>();
             // Regular expression to search texts finished with semicolons that is not between single quotes
-            for (Match m = Regex.Match(reader.ReadToEnd(), @"(?:[^;']|'[^']*')+;\s*", RegexOptions.Compiled); m.Success; m = m.NextMatch()) ddl.Add(m.Value.TrimEnd('\r', '\n'));
+            for (Match m = Regex.Match(reader.ReadToEnd(), @"(?:[^;']|'[^']*')+;\s*", RegexOptions.Compiled); m.Success; m = m.NextMatch())
+                ddl.Add(m.Value.TrimEnd('\r', '\n'));
 
             RegexOptions options = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase;
             var regexCreateTable = new Regex(@"(?<=^CREATE\s+TABLE\s+\[)[^\]]*(?=\]\s+\([^\)]*\))", options);
@@ -87,13 +88,15 @@ namespace CompactView
                 Match match2 = regexInsert.Match(ddl[i]);
                 if (match2.Success)
                 {
-                    if (!treeDb.Nodes.ContainsKey(match2.Value)) treeDb.Nodes.Add(match2.Value, match2.Value, 0, 0).Checked = true;
+                    if (!treeDb.Nodes.ContainsKey(match2.Value))
+                        treeDb.Nodes.Add(match2.Value, match2.Value, 0, 0).Checked = true;
                     data = true;
                     ok = true;
                 }
                 if (!ok)
                 {
-                    if (regexAlterTable.IsMatch(ddl[i]) | regexCreateIndex.IsMatch(ddl[i]) | regexSetIdentity.IsMatch(ddl[i])) ok = true;
+                    if (regexAlterTable.IsMatch(ddl[i]) | regexCreateIndex.IsMatch(ddl[i]) | regexSetIdentity.IsMatch(ddl[i]))
+                        ok = true;
                     if (!ok)
                     {
                         cmdError = ddl[i].Length <= 500 ? ddl[i] : $"{ddl[i].Remove(500)}...";
@@ -118,27 +121,35 @@ namespace CompactView
         {
             string pattern = $@"^CREATE\s+TABLE\s+\[{tableName}\]";
             int pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline));
-            if (pos >= 0) ddl.RemoveAt(pos);
+            if (pos >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^ALTER\s+TABLE\s+\[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^CREATE.*\s+INDEX.*\s+ON\s+\[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^ALTER\s+TABLE.*\s+ADD\s+CONSTRAINT.*\s+FOREIGN\s+KEY.*\s+REFERENCES\s+\[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^INSERT\s+INTO\s+\[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
 
             pattern = $@"^SET\s+IDENTITY_INSERT\s+\[{tableName}\]";
-            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0)
+                ddl.RemoveAt(pos);
         }
 
         private void FilterDdl()
         {
-            foreach (TreeNode node in treeDb.Nodes) if (!node.Checked) RemoveTable(node.Text);
+            foreach (TreeNode node in treeDb.Nodes)
+                if (!node.Checked)
+                    RemoveTable(node.Text);
 
             string patternInsert = @"^INSERT\s+INTO\s+\[.*\]";
             string patternIdentity = @"^SET\s+IDENTITY_INSERT\s+\[.*\]";
@@ -146,7 +157,8 @@ namespace CompactView
             {
                 bool insert = Regex.IsMatch(ddl[i], patternInsert, RegexOptions.Singleline);
                 bool identity = Regex.IsMatch(ddl[i], patternIdentity, RegexOptions.Singleline);
-                if ((!cbSchema.Checked && !insert && !identity) || (!cbData.Checked && insert) || (!cbData.Checked && identity) ) ddl.RemoveAt(i);
+                if ((!cbSchema.Checked && !insert && !identity) || (!cbData.Checked && insert) || (!cbData.Checked && identity))
+                    ddl.RemoveAt(i);
             }
         }
 
@@ -154,7 +166,8 @@ namespace CompactView
         {
             // Prevents the form is displayed if abort is true
             base.SetVisibleCore(abort ? false : value);
-            if (abort) DialogResult = DialogResult.Abort;
+            if (abort)
+                DialogResult = DialogResult.Abort;
         }
 
         private void treeDb_BeforeSelect(object sender, TreeViewCancelEventArgs e)
@@ -164,18 +177,23 @@ namespace CompactView
 
         private void treeDb_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (treeDb.HitTest(e.Location).Location == TreeViewHitTestLocations.Label) e.Node.Checked = !e.Node.Checked;
+            if (treeDb.HitTest(e.Location).Location == TreeViewHitTestLocations.Label)
+                e.Node.Checked = !e.Node.Checked;
         }
 
         private void btnImport_Click(object sender, EventArgs e)
         {
             bool anyTableExists = false;
             bool allTablesExists = true;
-            foreach (TreeNode node in treeDb.Nodes) if (node.Checked)
-            {
-                bool exists = db.TableNames.Contains(node.Text, StringComparer.InvariantCultureIgnoreCase);
-                if (exists) anyTableExists = true; else allTablesExists = false;
-            }
+            foreach (TreeNode node in treeDb.Nodes)
+                if (node.Checked)
+                {
+                    bool exists = db.TableNames.Contains(node.Text, StringComparer.InvariantCultureIgnoreCase);
+                    if (exists)
+                        anyTableExists = true;
+                    else
+                        allTablesExists = false;
+                }
 
             if (cbSchema.Checked && anyTableExists)
             {

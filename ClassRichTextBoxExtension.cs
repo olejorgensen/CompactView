@@ -19,11 +19,11 @@ along with CompactView.  If not, see <http://www.gnu.org/licenses/>.
 CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
 using System;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Drawing.Printing;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 /// <summary>
 /// Printing type to define how to perform the printing process
@@ -230,9 +230,9 @@ public class RichTextBoxHelper
     public void Print(PrintType printType, Margins margins, BeforePagePrintDelegate beforePagePrintDelegate)
     {
         var doc = new PrintDocument();
-        doc.BeginPrint += new PrintEventHandler(this.Document_BeginPrint);
-        doc.EndPrint += new PrintEventHandler(this.Document_EndPrint);
-        doc.PrintPage += new PrintPageEventHandler(this.Document_PrintPage);
+        doc.BeginPrint += new PrintEventHandler(Document_BeginPrint);
+        doc.EndPrint += new PrintEventHandler(Document_EndPrint);
+        doc.PrintPage += new PrintPageEventHandler(Document_PrintPage);
         doc.DefaultPageSettings.Margins = margins ?? new Margins(20, 20, 20, 20);
         doc.DocumentName = "CompactView document";
         this.beforePagePrintDelegate = beforePagePrintDelegate;
