@@ -480,4 +480,53 @@ namespace CompactView
         public string ColumnName { get; set; }
         public SortOrderEnum SortOrder { get; set; }
     }
+
+    struct Column
+    {
+        public string ColumnName { get; set; }
+        public bool IsNullable { get; set; }
+        public string DataType { get; set; }
+        public int CharacterMaxLength { get; set; }
+        public int NumericPrecision { get; set; }
+        public int NumericScale { get; set; }
+        public Int64 AutoIncrementBy { get; set; }
+        public Int64 AutoIncrementSeed { get; set; }
+        public Int64 AutoIncrementNext { get; set; }
+        public bool ColumnHasDefault { get; set; }
+        public string ColumnDefault { get; set; }
+        public bool RowGuidCol { get; set; }
+        public int Width { get; set; }
+    }
+
+    class ColumnList : List<string>
+    {
+        public override string ToString()
+        {
+            var str = new StringBuilder();
+            foreach (string column in this)
+            {
+                if (column.StartsWith("["))
+                    str.Append($"{column}, ");
+                else
+                    str.Append($"[{column}], ");
+            }
+            if (str.Length >= 2)
+                str.Remove(str.Length - 2, 2);
+            return str.ToString();
+        }
+    }
+
+    class Constraint
+    {
+        public string ConstraintTableName { get; set; }
+        public string ConstraintName { get; set; }
+        public string ColumnName { get; set; }
+        public ColumnList Columns { get; set; }
+        public string UniqueConstraintTableName { get; set; }
+        public string UniqueConstraintName { get; set; }
+        public string UniqueColumnName { get; set; }
+        public ColumnList UniqueColumns { get; set; }
+        public string DeleteRule { get; set; }
+        public string UpdateRule { get; set; }
+    }
 }
