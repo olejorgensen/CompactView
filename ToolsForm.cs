@@ -35,8 +35,10 @@ namespace CompactView
             InitializeComponent();
 
             SetCultureTexts();
-            foreach (Version version in SqlCeDb.AvailableVersions) cbVersion.Items.Add(version);
-            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) LoadDatabase(fileName, password);
+            foreach (Version version in SqlCeDb.AvailableVersions)
+                cbVersion.Items.Add(version);
+            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+                LoadDatabase(fileName, password);
             SetActiveButtons();
         }
 
@@ -46,20 +48,21 @@ namespace CompactView
             cbUpgradeTo.Enabled = btCompact.Enabled && cbUpgradeTo.Items.Count > 0;
             btUpgrade.Enabled = cbUpgradeTo.Enabled && cbUpgradeTo.SelectedIndex >= 0;
             btCreate.Enabled = cbVersion.Enabled = !db.IsOpen && !string.IsNullOrEmpty(tbFileName.Text) && !File.Exists(tbFileName.Text);
-            if (btCreate.Enabled) cbVersion.SelectedIndex = SqlCeDb.AvailableVersions.Length - 1;
+            if (btCreate.Enabled)
+                cbVersion.SelectedIndex = SqlCeDb.AvailableVersions.Length - 1;
         }
 
         private void SetCultureTexts()
         {
             this.Text = GlobalText.GetValue("Tools");
             groupBox1.Text = GlobalText.GetValue("Database");
-            label1.Text = GlobalText.GetValue("FileName") + ":";
-            label2.Text = GlobalText.GetValue("Password") + ":";
-            label4.Text = GlobalText.GetValue("Version") + ":";
+            label1.Text = $"{GlobalText.GetValue("FileName")}:";
+            label2.Text = $"{GlobalText.GetValue("Password")}:";
+            label4.Text = $"{GlobalText.GetValue("Version")}:";
             toolTip2.SetToolTip(tbFileName, GlobalText.GetValue("FileNameTip"));
             toolTip2.SetToolTip(tbPassword, GlobalText.GetValue("PasswordTip"));
             toolTip2.SetToolTip(btSelect, GlobalText.GetValue("SelectTip"));
-            label5.Text = GlobalText.GetValue("UpgradeToVersion") + ":";
+            label5.Text = $"{GlobalText.GetValue("UpgradeToVersion")}:";
             groupBox2.Text = GlobalText.GetValue("Action");
             btCreate.Text = GlobalText.GetValue("Create");
             btCompact.Text = GlobalText.GetValue("Compact");
@@ -79,27 +82,34 @@ namespace CompactView
 
         private void btSelect_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
             string fileName = openFileDialog1.FileName;
             tbFileName.Text = fileName;
 
             db.Close();
-            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) LoadDatabase(fileName, null);
+            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+                LoadDatabase(fileName, null);
             SetActiveButtons();
         }
 
         private void LoadDatabase(string fileName, string password)
         {
             tbFileName.Text = fileName;
-            tbPassword.Text = password ?? "";
+            tbPassword.Text = password ?? string.Empty;
             if (db.Open(fileName, password))
             {
                 cbVersion.Text = db.Version.SqlceVersion;
                 openPassword = password;
                 cbUpgradeTo.Items.Clear();
                 bool ok = false;
-                foreach (Version version in SqlCeDb.AvailableVersions) if (ok) cbUpgradeTo.Items.Add(version); else if (version == db.Version) ok = true;
-                if (cbUpgradeTo.Items.Count == 1) cbUpgradeTo.SelectedIndex = 0;
+                foreach (Version version in SqlCeDb.AvailableVersions)
+                    if (ok)
+                        cbUpgradeTo.Items.Add(version);
+                    else if (version == db.Version)
+                        ok = true;
+                if (cbUpgradeTo.Items.Count == 1)
+                    cbUpgradeTo.SelectedIndex = 0;
             }
             else
             {
@@ -107,7 +117,8 @@ namespace CompactView
                 {
                     db.Close();
                     var form = new GetPassForm();
-                    if (form.ShowDialog() == DialogResult.OK) LoadDatabase(fileName, form.edPass.Text.Trim());
+                    if (form.ShowDialog() == DialogResult.OK)
+                        LoadDatabase(fileName, form.edPass.Text.Trim());
                 }
             }
         }
@@ -126,12 +137,13 @@ namespace CompactView
                 return false;
             }
 
-            string backupFile = "";
+            string backupFile = string.Empty;
             int i = 1;
 
             try
             {
-                while (File.Exists(backupFile = Path.ChangeExtension(db.FileName, "." + i.ToString("0000") + Path.GetExtension(db.FileName)))) i++;
+                while (File.Exists(backupFile = Path.ChangeExtension(db.FileName, $".{i.ToString("0000")}{Path.GetExtension(db.FileName)}")))
+                    i++;
                 File.Copy(db.FileName, backupFile);
                 return true;
             }
@@ -149,7 +161,10 @@ namespace CompactView
             try
             {
                 ok = db.CreateDatabase(tbFileName.Text, tbPassword.Text.Trim(), (Version)cbVersion.SelectedItem);
-                if (ok) GlobalText.ShowInfo("CreateDone"); else GlobalText.ShowError("CreateError", db.LastError);
+                if (ok)
+                    GlobalText.ShowInfo("CreateDone");
+                else
+                    GlobalText.ShowError("CreateError", db.LastError);
             }
             catch (Exception ex)
             {
@@ -157,20 +172,25 @@ namespace CompactView
             }
             this.Cursor = Cursors.Default;
 
-            if (ok) LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
+            if (ok)
+                LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
             SetActiveButtons();
         }
 
         private void btCompact_Click(object sender, EventArgs e)
         {
-            if (!CreateBackup()) return;
+            if (!CreateBackup())
+                return;
 
             bool ok = false;
             this.Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Compact(tbFileName.Text, openPassword, tbPassword.Text.Trim());
-                if (ok) GlobalText.ShowInfo("CompactDone"); else GlobalText.ShowError("CompactError", db.LastError);
+                if (ok)
+                    GlobalText.ShowInfo("CompactDone");
+                else
+                    GlobalText.ShowError("CompactError", db.LastError);
             }
             catch (Exception ex)
             {
@@ -178,20 +198,25 @@ namespace CompactView
             }
             this.Cursor = Cursors.Default;
 
-            if (ok) LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
+            if (ok)
+                LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
             SetActiveButtons();
         }
 
         private void btRepair_Click(object sender, EventArgs e)
         {
-            if (!CreateBackup()) return;
+            if (!CreateBackup())
+                return;
 
             bool ok = false;
             this.Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Repair(tbFileName.Text, openPassword, tbPassword.Text.Trim());
-                if (ok) GlobalText.ShowInfo("RepairDone"); else GlobalText.ShowError("RepairError", db.LastError);
+                if (ok)
+                    GlobalText.ShowInfo("RepairDone");
+                else
+                    GlobalText.ShowError("RepairError", db.LastError);
             }
             catch (Exception ex)
             {
@@ -199,20 +224,25 @@ namespace CompactView
             }
             this.Cursor = Cursors.Default;
 
-            if (ok) LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
+            if (ok)
+                LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
             SetActiveButtons();
         }
 
         private void btShrink_Click(object sender, EventArgs e)
         {
-            if (!CreateBackup()) return;
+            if (!CreateBackup())
+                return;
 
             bool ok = false;
             this.Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Shrink(tbFileName.Text, openPassword, tbPassword.Text.Trim());
-                if (ok) GlobalText.ShowInfo("ShrinkDone"); else GlobalText.ShowError("ShrinkError", db.LastError);
+                if (ok)
+                    GlobalText.ShowInfo("ShrinkDone");
+                else
+                    GlobalText.ShowError("ShrinkError", db.LastError);
             }
             catch (Exception ex)
             {
@@ -220,21 +250,26 @@ namespace CompactView
             }
             this.Cursor = Cursors.Default;
 
-            if (ok) LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
+            if (ok)
+                LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
             SetActiveButtons();
         }
 
         private void btUpgrade_Click(object sender, EventArgs e)
         {
 
-            if (!CreateBackup()) return;
+            if (!CreateBackup())
+                return;
 
             bool ok = false;
             this.Cursor = Cursors.WaitCursor;
             try
             {
                 ok = db.Upgrade(tbFileName.Text, openPassword, tbPassword.Text.Trim(), (Version)cbUpgradeTo.SelectedItem);
-                if (ok) GlobalText.ShowInfo("UpgradeDone"); else GlobalText.ShowError("UpgradeError", db.LastError);
+                if (ok)
+                    GlobalText.ShowInfo("UpgradeDone");
+                else
+                    GlobalText.ShowError("UpgradeError", db.LastError);
             }
             catch (Exception ex)
             {
@@ -242,7 +277,8 @@ namespace CompactView
             }
             this.Cursor = Cursors.Default;
 
-            if (ok) LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
+            if (ok)
+                LoadDatabase(tbFileName.Text, tbPassword.Text.Trim());
             SetActiveButtons();
         }
 
@@ -251,8 +287,12 @@ namespace CompactView
             this.Cursor = Cursors.WaitCursor;
             try
             {
-                if (db.Verify(tbFileName.Text, tbPassword.Text.Trim())) GlobalText.ShowInfo("VerifyDone");
-                else if (db.LastError == "") GlobalText.ShowError("VerifyFault"); else GlobalText.ShowError("VerifyError", db.LastError);
+                if (db.Verify(tbFileName.Text, tbPassword.Text.Trim()))
+                    GlobalText.ShowInfo("VerifyDone");
+                else if (string.IsNullOrEmpty(db.LastError))
+                    GlobalText.ShowError("VerifyFault");
+                else
+                    GlobalText.ShowError("VerifyError", db.LastError);
             }
             catch (Exception ex)
             {

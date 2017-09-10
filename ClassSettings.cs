@@ -102,7 +102,7 @@ namespace CompactView
             RecentFiles.Clear();
             for (int i = 1; i <= MaxRecentFiles; i++)
             {
-                if (table.Columns.Contains("RecentFiles" + i)) RecentFiles.Add(row.Field<string>("RecentFiles" + i));
+                if (table.Columns.Contains($"RecentFiles{i}")) RecentFiles.Add(row.Field<string>($"RecentFiles{i}"));
             }
         }
 
@@ -119,7 +119,7 @@ namespace CompactView
             table.Columns.Add("BackColor1", typeof(int));
             table.Columns.Add("BackColor2", typeof(int));
             table.Columns.Add("ColorSet", typeof(int));
-            for (int i = 1; i <= RecentFiles.Count; i++) table.Columns.Add("RecentFiles" + i, typeof(string));
+            for (int i = 1; i <= RecentFiles.Count; i++) table.Columns.Add($"RecentFiles{i}", typeof(string));
 
             DataRow row = table.NewRow();
             row[0] = X;

@@ -101,7 +101,8 @@ namespace CompactView
         {
             EventHandler e = new EventHandler(RecentFiles_Click);
             recentFilesMenuItem.DropDownItems.Clear();
-            foreach (string fileName in settings.RecentFiles) recentFilesMenuItem.DropDownItems.Add(fileName, images.Images[0], e);
+            foreach (string fileName in settings.RecentFiles)
+                recentFilesMenuItem.DropDownItems.Add(fileName, images.Images[0], e);
         }
 
         private void RecentFiles_Click(object sender, EventArgs e)
@@ -127,15 +128,15 @@ namespace CompactView
             cutToolStripMenuItem.Text = GlobalText.GetValue("Cut");
             copyToolStripMenuItem.Text = GlobalText.GetValue("Copy");
             pasteToolStripMenuItem.Text = GlobalText.GetValue("Paste");
-            loadFromFileToolStripMenuItem.Text = GlobalText.GetValue("LoadFromFile") + "...";
-            saveToFileToolStripMenuItem.Text = GlobalText.GetValue("SaveToFile") + "...";
-            printToolStripMenuItem.Text = GlobalText.GetValue("Print") + "...";
+            loadFromFileToolStripMenuItem.Text = $"{GlobalText.GetValue("LoadFromFile")}...";
+            saveToFileToolStripMenuItem.Text = $"{GlobalText.GetValue("SaveToFile")}...";
+            printToolStripMenuItem.Text = $"{GlobalText.GetValue("Print")}...";
             fileMenuItem.Text = GlobalText.GetValue("File");
-            openDatabaseMenuItem.Text = GlobalText.GetValue("OpenDatabase") + "...";
+            openDatabaseMenuItem.Text = $"{GlobalText.GetValue("OpenDatabase")}...";
             recentFilesMenuItem.Text = GlobalText.GetValue("RecentFiles");
             allowEditingMenuItem.Text = GlobalText.GetValue("AllowEditing");
-            importMenuItem.Text = GlobalText.GetValue("Import") + "...";
-            exportMenuItem.Text = GlobalText.GetValue("Export") + "...";
+            importMenuItem.Text = $"{GlobalText.GetValue("Import")}...";
+            exportMenuItem.Text = $"{GlobalText.GetValue("Export")}...";
             exitMenuItem.Text = GlobalText.GetValue("Exit");
             editMenuItem.Text = GlobalText.GetValue("Edit");
             cutMenuItem.Text = GlobalText.GetValue("Cut");
@@ -147,34 +148,37 @@ namespace CompactView
             executeMenuItem.Text = GlobalText.GetValue("Execute");
             clearMenuItem.Text = GlobalText.GetValue("Clear");
             toolsMenuItem.Text = GlobalText.GetValue("Tools");
-            databaseToolsMenuItem.Text = GlobalText.GetValue("DatabaseTools") + "...";
-            optionsMenuItem.Text = GlobalText.GetValue("Options") + "...";
+            databaseToolsMenuItem.Text = $"{GlobalText.GetValue("DatabaseTools")}...";
+            optionsMenuItem.Text = $"{GlobalText.GetValue("Options")}...";
             helpMenuItem.Text = GlobalText.GetValue("Help");
-            aboutCompactViewMenuItem.Text = GlobalText.GetValue("About") + " CompactView";
-            loadSqlMenuItem.Text = GlobalText.GetValue("LoadSqlQuery") + "...";
-            saveSqlMenuItem.Text = GlobalText.GetValue("SaveSqlQuery") + "...";
-            saveSchemaMenuItem.Text = GlobalText.GetValue("SaveSqlSchema") + "...";
+            aboutCompactViewMenuItem.Text = $"{GlobalText.GetValue("About")} CompactView";
+            loadSqlMenuItem.Text = $"{GlobalText.GetValue("LoadSqlQuery")}...";
+            saveSqlMenuItem.Text = $"{GlobalText.GetValue("SaveSqlQuery")}...";
+            saveSchemaMenuItem.Text = $"{GlobalText.GetValue("SaveSqlSchema")}...";
             closeDatabaseMenuItem.Text = GlobalText.GetValue("CloseDatabase");
-            printMenuItem.Text = GlobalText.GetValue("Print") + "...";
+            printMenuItem.Text = $"{GlobalText.GetValue("Print")}...";
             previewMenuItem.Text = GlobalText.GetValue("Preview");
         }
 
         private DataTable DatabaseInfoLocale(DataTable table)
         {
-            if (table.Columns.Count != 2) return table;
+            if (table.Columns.Count != 2)
+                return table;
 
             table.Columns[0].ColumnName = GlobalText.GetValue("Property");
             table.Columns[1].ColumnName = GlobalText.GetValue("Value");
-            
+
             foreach (DataRow row in table.Rows)
             {
-                string key = row[0].ToString().Replace(" ", "");
+                string key = row[0].ToString().Replace(" ", string.Empty);
                 string s = GlobalText.GetValue(key);
-                if (!string.IsNullOrEmpty(s)) row[0] = s;
+                if (!string.IsNullOrEmpty(s))
+                    row[0] = s;
                 if (key == "CaseSensitive")
                 {
                     s = GlobalText.GetValue(row[1].ToString());
-                    if (!string.IsNullOrEmpty(s)) row[1] = s;
+                    if (!string.IsNullOrEmpty(s))
+                        row[1] = s;
                 }
             }
             return table;
@@ -217,7 +221,8 @@ namespace CompactView
 
             try
             {
-                if (!File.Exists(fileName)) throw new Exception(string.Format(GlobalText.GetValue("FileNotFound") + ": '{0}'", fileName));
+                if (!File.Exists(fileName))
+                    throw new Exception($"{GlobalText.GetValue("FileNotFound")}: '{fileName}'");
 
                 this.Cursor = Cursors.WaitCursor;
 
@@ -229,7 +234,8 @@ namespace CompactView
                     treeDb.BeginUpdate();
                     treeDb.Nodes.Clear();
                     TreeNode main = treeDb.Nodes.Add("Database", Path.GetFileNameWithoutExtension(fileName), 0, 0);
-                    foreach (string tableName in db.TableNames) main.Nodes.Add(tableName, tableName, 1, 1);
+                    foreach (string tableName in db.TableNames)
+                        main.Nodes.Add(tableName, tableName, 1, 1);
                     main.Expand();
                     treeDb.EndUpdate();
                     treeDb.SelectedNode = treeDb.Nodes[0];
@@ -243,7 +249,8 @@ namespace CompactView
                     if (badPassword)
                     {
                         var form = new GetPassForm();
-                        if (form.ShowDialog() == DialogResult.OK) LoadDatabase(fileName, form.edPass.Text.Trim());
+                        if (form.ShowDialog() == DialogResult.OK)
+                            LoadDatabase(fileName, form.edPass.Text.Trim());
                     }
                 }
             }
@@ -267,13 +274,13 @@ namespace CompactView
         {
             dataGrid.DataSource = null;
             db.Close();
-            
+
             treeDb.Nodes.Clear();
             rtbDdl.Clear();
             rtbQuery.Clear();
 
-            btnQuery.Checked = btnQuery.Enabled = btnExecute.Enabled = btnClear.Enabled = importMenuItem.Enabled = 
-                exportMenuItem.Enabled = saveSchemaMenuItem.Enabled = saveSqlMenuItem.Enabled = closeDatabaseMenuItem.Enabled = 
+            btnQuery.Checked = btnQuery.Enabled = btnExecute.Enabled = btnClear.Enabled = importMenuItem.Enabled =
+                exportMenuItem.Enabled = saveSchemaMenuItem.Enabled = saveSqlMenuItem.Enabled = closeDatabaseMenuItem.Enabled =
                 loadSqlMenuItem.Enabled = printMenuItem.Enabled = previewMenuItem.Enabled = false;
             splitterHorizontal.Panel1Collapsed = splitterHorizontal.IsSplitterFixed = true;
             this.Text = formText;
@@ -285,21 +292,24 @@ namespace CompactView
         /// </summary>
         private void UpdateTreeDb()
         {
-            string selected = treeDb.SelectedNode == null ? "" : treeDb.SelectedNode.Text;
-            if (treeDb.SelectedNode == treeDb.Nodes[0]) selected = "";
+            string selected = treeDb.SelectedNode == null ? string.Empty : treeDb.SelectedNode.Text;
+            if (treeDb.SelectedNode == treeDb.Nodes[0])
+                selected = string.Empty;
 
             treeDb.BeginUpdate();
             TreeNode main = treeDb.Nodes[0];
             main.Nodes.Clear();
-            foreach (string tableName in db.TableNames) main.Nodes.Add(tableName, tableName, 1, 1);
+            foreach (string tableName in db.TableNames)
+                main.Nodes.Add(tableName, tableName, 1, 1);
             main.Expand();
             treeDb.EndUpdate();
 
             treeDb.SelectedNode = null;
-            if (selected != "")
+            if (!string.IsNullOrEmpty(selected))
             {
                 int i = main.Nodes.IndexOfKey(selected);
-                if (i >= 0) treeDb.SelectedNode = main.Nodes[i];
+                if (i >= 0)
+                    treeDb.SelectedNode = main.Nodes[i];
             }
             else
             {
@@ -342,7 +352,8 @@ namespace CompactView
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) LoadDatabase(openFileDialog1.FileName);
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                LoadDatabase(openFileDialog1.FileName);
         }
 
         private void btnQuery_Click(object sender, EventArgs e)
@@ -360,7 +371,8 @@ namespace CompactView
 
         private void treeDb_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (!db.IsOpen) return;
+            if (!db.IsOpen)
+                return;
 
             dataGrid.SuspendLayout();
             if (e.Node.ImageIndex == 0)
@@ -390,7 +402,7 @@ namespace CompactView
         }
 
         private void dataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {            
+        {
             // Error when show/edit field
             GlobalText.ShowError("ChangingDataError", e.Exception.Message);
             e.Cancel = true;
@@ -408,18 +420,21 @@ namespace CompactView
         private void mainForm_KeyDown(object sender, KeyEventArgs e)
         {
             // On F5 key press, execute the query
-            if (e.KeyData == Keys.F5 && rtbQuery.Focused) btnExecute.PerformClick();
+            if (e.KeyData == Keys.F5 && rtbQuery.Focused)
+                btnExecute.PerformClick();
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            if (rtbQuery.Text.Trim().Length == 0) return;
+            if (rtbQuery.Text.Trim().Length == 0)
+                return;
             bool partial = rtbQuery.SelectedText.Trim().Length > 0;
             if (partial)
             {
-                DialogResult result = MessageBox.Show(GlobalText.GetValue("SelectedTextQuery"), GlobalText.GetValue("Confirm"), 
+                DialogResult result = MessageBox.Show(GlobalText.GetValue("SelectedTextQuery"), GlobalText.GetValue("Confirm"),
                     MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                if (result == DialogResult.Cancel) return;
+                if (result == DialogResult.Cancel)
+                    return;
                 partial = result == DialogResult.Yes;
             }
             string sql = partial ? rtbQuery.SelectedText.Trim() : rtbQuery.Text.Trim();
@@ -430,7 +445,7 @@ namespace CompactView
             DateTime initTime = DateTime.Now;
 
             object resultSet = db.ExecuteSql(sql, false);
-            
+
             long ms = (long)(DateTime.Now - initTime).TotalMilliseconds;
 
             dataGrid.DataSource = resultSet;
@@ -438,9 +453,8 @@ namespace CompactView
             if (resultSet != null || string.IsNullOrEmpty(db.LastError))
             {
                 lbResult.ForeColor = Color.Black;
-                lbResult.Text = string.Format("{0} {1}, {2} {3}, {4} {5}", db.QueryCount, GlobalText.GetValue("Querys"), dataGrid.RowCount, 
-                    GlobalText.GetValue("Rows"), ms, GlobalText.GetValue("Milliseconds"));
-                if (resultSet == null && regexCreateAlterDrop.IsMatch(regexDropQuotesAndBrackets.Replace(rtbQuery.Text, "")))
+                lbResult.Text = $"{db.QueryCount} {GlobalText.GetValue("Querys")}, {dataGrid.RowCount} {GlobalText.GetValue("Rows")}, {ms} {GlobalText.GetValue("Milliseconds")}";
+                if (resultSet == null && regexCreateAlterDrop.IsMatch(regexDropQuotesAndBrackets.Replace(rtbQuery.Text, string.Empty)))
                 {
                     db.ResetDdl();  // Update DDL
                     UpdateTreeDb();
@@ -448,7 +462,7 @@ namespace CompactView
                 else
                 {
                     tabControl1.SelectedIndex = 0;
-                    if (resultSet == null && regexInsertUpdateDelete.IsMatch(regexDropQuotesAndBrackets.Replace(rtbQuery.Text, "")))
+                    if (resultSet == null && regexInsertUpdateDelete.IsMatch(regexDropQuotesAndBrackets.Replace(rtbQuery.Text, string.Empty)))
                     {
                         TreeNode node = treeDb.SelectedNode;  // Update data view
                         treeDb.SelectedNode = null;
@@ -466,19 +480,21 @@ namespace CompactView
         private void btnClear_Click(object sender, EventArgs e)
         {
             rtbQuery.Clear();
-            lbResult.Text = "";
+            lbResult.Text = string.Empty;
         }
 
         private void cbReadOnly_SelectedIndexChanged(object sender, EventArgs e)
         {
             TreeNode node = treeDb.SelectedNode;
-            if (node != null && node.ImageIndex == 1) treeDb_AfterSelect(treeDb, new TreeViewEventArgs(node));
+            if (node != null && node.ImageIndex == 1)
+                treeDb_AfterSelect(treeDb, new TreeViewEventArgs(node));
             allowEditingMenuItem.Checked = cbReadOnly.SelectedIndex == 1;
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedIndex == 0) dataGrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            if (tabControl1.SelectedIndex == 0)
+                dataGrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
             UpdateStatus();
         }
 
@@ -486,27 +502,38 @@ namespace CompactView
         {
             // Runs only once when the application just finish of display the form
             timer1.Stop();
-            
+
             // Initialize regex
-            regexDropQuotesAndBrackets.Match("");
-            regexCreateAlterDrop.Match("");
-            regexInsertUpdateDelete.Match("");
+            regexDropQuotesAndBrackets.Match(string.Empty);
+            regexCreateAlterDrop.Match(string.Empty);
+            regexInsertUpdateDelete.Match(string.Empty);
         }
 
         private void rtbDdl_Click(object sender, EventArgs e)
         {
             // If the query is enabled, clicking on the fields are added to the query
-            if (!btnQuery.Checked) return;
+            if (!btnQuery.Checked)
+                return;
 
             char c = ' ';
 
             int start = rtbDdl.SelectionStart;
-            while (start >= 0 && (c = rtbDdl.Text[start]) != '[') if (c == ']' || c == (char)10) break; else start--;
-            if (c != '[') return;
+            while (start >= 0 && (c = rtbDdl.Text[start]) != '[')
+                if (c == ']' || c == (char)10)
+                    break;
+                else
+                    start--;
+            if (c != '[')
+                return;
 
             int stop = start;
-            while (stop < rtbDdl.Text.Length && (c = rtbDdl.Text[stop]) != ']') if (c == (char)10) break; else stop++;
-            if (c != ']') return;
+            while (stop < rtbDdl.Text.Length && (c = rtbDdl.Text[stop]) != ']')
+                if (c == (char)10)
+                    break;
+                else
+                    stop++;
+            if (c != ']')
+                return;
 
             rtbDdl.SelectionStart = start;
             rtbDdl.SelectionLength = stop - start + 1;
@@ -521,7 +548,8 @@ namespace CompactView
 
             // Open the database file if specified on the command line
             string[] cmdLine = Environment.GetCommandLineArgs();
-            if (cmdLine.Length > 1 && !string.IsNullOrEmpty(cmdLine[1])) LoadDatabase(Path.GetFullPath(cmdLine[1]));
+            if (cmdLine.Length > 1 && !string.IsNullOrEmpty(cmdLine[1]))
+                LoadDatabase(Path.GetFullPath(cmdLine[1]));
         }
 
         private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
@@ -534,13 +562,15 @@ namespace CompactView
 
         private void loadFromFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog2.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog2.ShowDialog() != DialogResult.OK)
+                return;
             rtbQuery.LoadFile(openFileDialog2.FileName, RichTextBoxStreamType.PlainText);
         }
 
         private void saveToFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
 
             bool onQuery = ((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl == rtbQuery;
             RichTextBox rtb = onQuery ? rtbQuery : rtbDdl;
@@ -587,7 +617,8 @@ namespace CompactView
 
         private void optionsMenuItem_Click(object sender, EventArgs e)
         {
-            if (new OptionsForm(dataGrid, settings).ShowDialog() != DialogResult.OK) return;
+            if (new OptionsForm(dataGrid, settings).ShowDialog() != DialogResult.OK)
+                return;
         }
 
         private void exportMenuItem_Click(object sender, EventArgs e)
@@ -623,9 +654,11 @@ namespace CompactView
             bool queryFocused = btnQuery.Enabled && btnQuery.Checked && rtbQuery.Focused;
             RichTextBox rtb = queryFocused ? rtbQuery : rtbDdl;
             bool all = rtb.SelectionLength == 0;
-            if (all) rtb.SelectAll();
+            if (all)
+                rtb.SelectAll();
             rtb.Copy();
-            if (all) rtb.DeselectAll();
+            if (all)
+                rtb.DeselectAll();
         }
 
         private void btnPaste_Click(object sender, EventArgs e)
@@ -635,7 +668,7 @@ namespace CompactView
 
         private void deleteMenuItem_Click(object sender, EventArgs e)
         {
-            rtbQuery.SelectedText = "";
+            rtbQuery.SelectedText = string.Empty;
         }
 
         private bool queryPrint = false;
@@ -662,13 +695,15 @@ namespace CompactView
 
         private void loadSqlMenuItem_Click(object sender, EventArgs e)
         {
-            if (openFileDialog2.ShowDialog() != DialogResult.OK) return;
+            if (openFileDialog2.ShowDialog() != DialogResult.OK)
+                return;
             rtbQuery.Text = File.ReadAllText(openFileDialog2.FileName);
         }
 
         private void saveSqlMenuItem_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
 
             bool all = rtbQuery.SelectionLength == 0;
             TextWriter writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
@@ -678,7 +713,8 @@ namespace CompactView
 
         private void saveSchemaMenuItem_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
+            if (saveFileDialog1.ShowDialog() != DialogResult.OK)
+                return;
 
             bool all = rtbDdl.SelectionLength == 0;
             TextWriter writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
@@ -712,20 +748,27 @@ namespace CompactView
             const string TIFF_ID_BLOCK = "II*\u0000";
 
             int length = bytes.Length;
-            if (length > 300) length = 300;
+            if (length > 300)
+                length = 300;
             string s = Encoding.UTF7.GetString(bytes, 0, length);
-            if (s.Length > 300) s = s.Remove(300);
+            if (s.Length > 300)
+                s = s.Remove(300);
 
             int i = s.IndexOf(BITMAP_ID_BLOCK);
-            if (i >= 0) return i;
+            if (i >= 0)
+                return i;
             i = s.IndexOf(JPG_ID_BLOCK);
-            if (i >= 0) return i;
+            if (i >= 0)
+                return i;
             i = s.IndexOf(PNG_ID_BLOCK);
-            if (i >= 0) return i;
+            if (i >= 0)
+                return i;
             i = s.IndexOf(GIF_ID_BLOCK);
-            if (i >= 0) return i;
+            if (i >= 0)
+                return i;
             i = s.IndexOf(TIFF_ID_BLOCK);
-            if (i >= 0) return i;
+            if (i >= 0)
+                return i;
             return 0;
         }
 
@@ -735,7 +778,8 @@ namespace CompactView
             {
                 int i = GetOleHeaderPos(bytes);
                 Image image;
-                using (var ms = new MemoryStream(bytes, i, bytes.Length - i)) image = Image.FromStream(ms);
+                using (var ms = new MemoryStream(bytes, i, bytes.Length - i))
+                    image = Image.FromStream(ms);
                 return image;
             }
             catch (ArgumentException)
@@ -746,13 +790,15 @@ namespace CompactView
 
         private void dataGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            if (dataGrid.Columns[e.ColumnIndex].ValueType != typeof(byte[])) return;
+            if (dataGrid.Columns[e.ColumnIndex].ValueType != typeof(byte[]))
+                return;
             object val = e.Value;
             if (val != null && val.GetType() == typeof(byte[]) && ((byte[])val).Length > 0)
             {
-                if (GetImage((byte[])val) != null) return;
+                if (GetImage((byte[])val) != null)
+                    return;
                 int length = ((byte[])val).Length;
-                string s = "";
+                string s = string.Empty;
                 if (length > 100)
                 {
                     length = 100;
@@ -770,18 +816,23 @@ namespace CompactView
         private void dataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             DataGridViewCell cell = dataGrid[e.ColumnIndex, e.RowIndex];
-            if (cell.ValueType == typeof(string) && cell.Value == DBNull.Value) dataGrid[e.ColumnIndex, e.RowIndex].Value = string.Empty;
+            if (cell.ValueType == typeof(string) && cell.Value == DBNull.Value)
+                dataGrid[e.ColumnIndex, e.RowIndex].Value = string.Empty;
         }
 
         private void copyToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (dataGrid.SelectedCells.Count != 1) return;
+            if (dataGrid.SelectedCells.Count != 1)
+                return;
             object val = dataGrid.SelectedCells[0].Value;
             Type t = dataGrid.SelectedCells[0].ValueType;
             if (t == typeof(byte[]))
             {
                 Image image = GetImage((byte[])val);
-                if (image == null) Clipboard.SetText("0x" + BitConverter.ToString((byte[])val).Replace("-", "")); else Clipboard.SetImage(image);
+                if (image == null)
+                    Clipboard.SetText($"0x{BitConverter.ToString((byte[])val).Replace("-", string.Empty)}");
+                else
+                    Clipboard.SetImage(image);
             }
             else
             {
@@ -796,7 +847,9 @@ namespace CompactView
             {
                 dataGrid.ContextMenuStrip = contextMenuStrip2;
                 dataGrid.CurrentCell = dataGrid[hit.ColumnIndex, hit.RowIndex];
-                foreach (DataGridViewCell cell in dataGrid.SelectedCells) if (cell != dataGrid.CurrentCell) cell.Selected = false;
+                foreach (DataGridViewCell cell in dataGrid.SelectedCells)
+                    if (cell != dataGrid.CurrentCell)
+                        cell.Selected = false;
             }
             else
             {
@@ -806,26 +859,35 @@ namespace CompactView
 
         private void dataGrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (!db.IsOpen || treeDb.SelectedNode == null || treeDb.SelectedNode.ImageIndex == 0) return;
+            if (!db.IsOpen || treeDb.SelectedNode == null || treeDb.SelectedNode.ImageIndex == 0)
+                return;
 
             string tableName = treeDb.SelectedNode.Text;
             string columnName = dataGrid.Columns[e.ColumnIndex].HeaderCell.Value.ToString();
             SortOrder order = dataGrid.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection;
             string dbtype = db.GetColumnDataType(tableName, columnName);
-            if (dbtype == "ntext" || dbtype == "image") return;
+            if (dbtype == "ntext" || dbtype == "image")
+                return;
 
             dataGrid.SuspendLayout();
             dataGrid.Columns.Clear();
             switch (order)
             {
-                case SortOrder.None: order = SortOrder.Ascending; break;
-                case SortOrder.Ascending: order = SortOrder.Descending; break;
-                case SortOrder.Descending: order = SortOrder.Ascending; break;
+                case SortOrder.None:
+                    order = SortOrder.Ascending;
+                    break;
+                case SortOrder.Ascending:
+                    order = SortOrder.Descending;
+                    break;
+                case SortOrder.Descending:
+                    order = SortOrder.Ascending;
+                    break;
             }
             dataGrid.DataSource = db.GetTableData(tableName, columnName, order);
             dataGrid.Columns[columnName].SortMode = DataGridViewColumnSortMode.Programmatic;
             dataGrid.Columns[columnName].HeaderCell.SortGlyphDirection = order;
-            if (e.Button == MouseButtons.Right) dataGrid.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            if (e.Button == MouseButtons.Right)
+                dataGrid.Columns[columnName].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             dataGrid.ResumeLayout();
         }
 

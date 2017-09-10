@@ -59,14 +59,14 @@ namespace CompactView
         public SqlParser()
         {
             var pattern = new StringBuilder(@"(?<A>\b(");
-            foreach (string key in keywords) pattern.Append(key + "|");
+            foreach (string key in keywords) pattern.Append($"{key}|");
             pattern.Length--;
             pattern.Append(@")\b)");
             regexKeywords = new Regex(pattern.ToString(), RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
             pattern.Clear();
             pattern.Append(@"(?<A>\b(");
-            foreach (string typ in types) pattern.Append(typ + "|");
+            foreach (string typ in types) pattern.Append($"{typ}|");
             pattern.Length--;
             pattern.Append(@")\b)");
             regexTypes = new Regex(pattern.ToString(), RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.IgnoreCase);
@@ -77,7 +77,7 @@ namespace CompactView
             regexNumbers = new Regex(@"(?<A>\b\d+\b)", RegexOptions.Compiled | RegexOptions.Multiline);
             regexStrings = new Regex(@"(?<A>(?<!\\)'(\\'|[^'])*(?<!\\)')", RegexOptions.Compiled | RegexOptions.Multiline);
             regexPar = new Regex(@"\\par\b", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.RightToLeft);
-            string s = Parse(""); // Initialize Regex;
+            string s = Parse(string.Empty); // Initialize Regex;
         }
 
         public string Parse(string text)

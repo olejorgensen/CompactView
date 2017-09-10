@@ -71,7 +71,7 @@ namespace CompactView
             int i = s.LastIndexOf('.');
             if (i >= 0)
                 s = s.Remove(i);
-            return s + "_" + cultureCode + ".xml";
+            return $"{s}_{cultureCode}.xml";
         }
 
         private static void FillEnglish()
@@ -207,9 +207,11 @@ namespace CompactView
                 table.Columns.Add("Value", typeof(string));
                 foreach (KeyValuePair<string, string> row in list)
                     table.Rows.Add(row.Key, row.Value);
-                var xw = new XmlTextWriter(fileName, Encoding.UTF8) { Formatting = Formatting.Indented };
-                table.WriteXml(xw, XmlWriteMode.WriteSchema);
-                xw.Close();
+                using (var xw = new XmlTextWriter(fileName, Encoding.UTF8))
+                {
+                    xw.Formatting = Formatting.Indented;
+                    table.WriteXml(xw, XmlWriteMode.WriteSchema);
+                }
             }
         }
 
@@ -217,7 +219,7 @@ namespace CompactView
         {
             if (string.IsNullOrEmpty(CultureCode))
                 CultureCode = System.Globalization.CultureInfo.CurrentCulture.Name;
-            return list.TryGetValue(key, out string value) ? value : "";
+            return list.TryGetValue(key, out string value) ? value : string.Empty;
         }
 
         public static void ShowError(string key)
@@ -227,18 +229,18 @@ namespace CompactView
 
         public static void ShowError(string key, string additionalMsg)
         {
-            string errorText = string.IsNullOrEmpty(additionalMsg) ? GlobalText.GetValue(key) : GlobalText.GetValue(key) + ":\r\n\r\n" + additionalMsg;
-            MessageBox.Show(errorText, GlobalText.GetValue("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            string errorText = string.IsNullOrEmpty(additionalMsg) ? GetValue(key) : $"{GetValue(key)}:\r\n\r\n{additionalMsg}";
+            MessageBox.Show(errorText, GetValue("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static void ShowInfo(string key)
         {
-            MessageBox.Show(GlobalText.GetValue(key), GlobalText.GetValue("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(GetValue(key), GetValue("Information"), MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public static void ShowWarning(string warningMsg)
         {
-            MessageBox.Show(warningMsg, GlobalText.GetValue("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(warningMsg, GetValue("Warning"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 }

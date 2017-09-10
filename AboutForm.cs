@@ -29,15 +29,15 @@ namespace CompactView
         public AboutBox1()
         {
             InitializeComponent();
-            this.Text = String.Format("{0} {1}", GlobalText.GetValue("About"), AssemblyTitle);
+            this.Text = $"{GlobalText.GetValue("About")} {AssemblyTitle}";
             labelProductName.Text = AssemblyProduct;
-            labelVersion.Text = String.Format("{0} {1}", GlobalText.GetValue("Version"), AssemblyVersion);
+            labelVersion.Text = $"{GlobalText.GetValue("Version")} {AssemblyVersion}";
             labelCopyright.Text = AssemblyCopyright;
             textBoxDescription.Text = GlobalText.GetValue("AboutDescription");
             okButton.Text = GlobalText.GetValue("Ok");
             labelLanguage.Text = Thread.CurrentThread.CurrentUICulture.Name;
             string s = GlobalText.GetValue("TranslationInfo");
-            labelTranslationInfo.Text = s + ".";
+            labelTranslationInfo.Text = $"{s}.";
             if (s == "English translation by Iván Costales Suárez (CompactView)") tableLayoutPanel.RowStyles[5].Height = 0;
         }
 
@@ -51,7 +51,7 @@ namespace CompactView
                 if (attributes.Length > 0)
                 {
                     var titleAttribute = (AssemblyTitleAttribute)attributes[0];
-                    if (titleAttribute.Title != "")
+                    if (!string.IsNullOrEmpty(titleAttribute.Title))
                     {
                         return titleAttribute.Title;
                     }
@@ -75,7 +75,7 @@ namespace CompactView
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
                 if (attributes.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return ((AssemblyDescriptionAttribute)attributes[0]).Description;
             }
@@ -88,7 +88,7 @@ namespace CompactView
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
                 if (attributes.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return ((AssemblyProductAttribute)attributes[0]).Product;
             }
@@ -101,7 +101,7 @@ namespace CompactView
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
                 if (attributes.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
             }
@@ -114,7 +114,7 @@ namespace CompactView
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
                 if (attributes.Length == 0)
                 {
-                    return "";
+                    return string.Empty;
                 }
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }

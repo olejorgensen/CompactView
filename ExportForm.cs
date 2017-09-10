@@ -83,37 +83,37 @@ namespace CompactView
 
         private void RemoveTable(List<string> ddl, string tableName)
         {
-            int pos = ddl.FindIndex(cmd => cmd.StartsWith("CREATE TABLE [" + tableName + "]"));
+            int pos = ddl.FindIndex(cmd => cmd.StartsWith($"CREATE TABLE [{tableName}]"));
             if (pos >= 0) ddl.RemoveAt(pos);
 
-            while ((pos = ddl.FindIndex(cmd => cmd.StartsWith("ALTER TABLE [" + tableName + "]"))) >= 0) ddl.RemoveAt(pos);
+            while ((pos = ddl.FindIndex(cmd => cmd.StartsWith($"ALTER TABLE [{tableName}]"))) >= 0) ddl.RemoveAt(pos);
 
-            string pattern = @"^CREATE.* INDEX.* ON \[" + tableName + @"\]";
+            string pattern = $@"^CREATE.* INDEX.* ON \[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^ALTER TABLE.* ADD CONSTRAINT.* FOREIGN KEY.* REFERENCES \[" + tableName + @"\]";
+            pattern = $@"^ALTER TABLE.* ADD CONSTRAINT.* FOREIGN KEY.* REFERENCES \[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
         }
 
         private void RemoveField(List<string> ddl, string tableName, string fieldName)
         {
-            int pos = ddl.FindIndex(cmd => cmd.StartsWith("CREATE TABLE [" + tableName + "]"));
+            int pos = ddl.FindIndex(cmd => cmd.StartsWith($"CREATE TABLE [{tableName}]"));
             if (pos >= 0)
             {
-                ddl[pos] = Regex.Replace(ddl[pos], @"^\s*\[" + fieldName + @"\].*\r\n", "", RegexOptions.Multiline);
+                ddl[pos] = Regex.Replace(ddl[pos], $@"^\s*\[{fieldName}\].*\r\n", string.Empty, RegexOptions.Multiline);
                 ddl[pos] = Regex.Replace(ddl[pos], @",\r\n\)$", "\r\n)");
             }
 
-            string pattern = @"^ALTER TABLE \[" + tableName + @"\].* PRIMARY KEY (.*\[" + fieldName + @"\].*)";
+            string pattern = $@"^ALTER TABLE \[{tableName}\].* PRIMARY KEY (.*\[{fieldName}\].*)";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^CREATE.* INDEX.* ON \[" + tableName + @"\] \(.*\[" + fieldName + @"\].*\)";
+            pattern = $@"^CREATE.* INDEX.* ON \[{tableName}\] \(.*\[{fieldName}\].*\)";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^ALTER TABLE \[" + tableName + @"\] ADD CONSTRAINT.* FOREIGN KEY \(.*\[" + fieldName + @"\].*\)";
+            pattern = $@"^ALTER TABLE \[{tableName}\] ADD CONSTRAINT.* FOREIGN KEY \(.*\[{fieldName}\].*\)";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^ALTER TABLE.* ADD CONSTRAINT.* FOREIGN KEY.* REFERENCES \[" + tableName + @"\] \(.*\[" + fieldName + @"\].*\)";
+            pattern = $@"^ALTER TABLE.* ADD CONSTRAINT.* FOREIGN KEY.* REFERENCES \[{tableName}\] \(.*\[{fieldName}\].*\)";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
         }
 
@@ -132,7 +132,7 @@ namespace CompactView
             }
 
             var sb = new StringBuilder();
-            foreach (string s in ddl) sb.AppendLine(s + ";" + Environment.NewLine);
+            foreach (string s in ddl) sb.AppendLine($"{s};{Environment.NewLine}");
             return sb.ToString();
         }
 
@@ -162,7 +162,7 @@ namespace CompactView
             }
 
             var sb = new StringBuilder();
-            foreach (string s in ddl) sb.AppendLine(s + ";" + Environment.NewLine);
+            foreach (string s in ddl) sb.AppendLine($"{s};{Environment.NewLine}");
             return sb.ToString();
         }
 
@@ -178,7 +178,7 @@ namespace CompactView
                 {
                     if (n.Checked)
                     {
-                        sb.Append("[" + n.Text + "], ");
+                        sb.Append($"[{n.Text}], ");
                         count++;
                     }
                 }
@@ -186,15 +186,15 @@ namespace CompactView
 
                 string schema = db.GetTableDdl(node.Text, true, false, false, false);
                 string identity = db.GetAutoincNext(node.Text);
-                if (identity != null) ddl.AppendLine("SET IDENTITY_INSERT [" + node.Text + "] ON;" + Environment.NewLine);
+                if (identity != null) ddl.AppendLine($"SET IDENTITY_INSERT [{node.Text}] ON;{Environment.NewLine}");
 
                 string fields = sb.ToString().TrimEnd(',', ' ');
-                string sqlSelect = "SELECT " + fields + " FROM [" + node.Text + "]";
+                string sqlSelect = $"SELECT {fields} FROM [{node.Text}]";
                 var dr = (IDataReader)db.ExecuteSql(sqlSelect, false);
                 object[] values = new object[count];
                 while (dr.Read())
                 {
-                    ddl.Append("INSERT INTO [" + node.Text + "] (" + fields + ") VALUES (");
+                    ddl.Append($"INSERT INTO [{node.Text}] ({fields}) VALUES (");
                     dr.GetValues(values);
                     for (int i = 0; i < count; i++)
                     {
@@ -212,26 +212,26 @@ namespace CompactView
                                 t == typeof(Int64) || t == typeof(Decimal) || t == typeof(Double) || t == typeof(Single);
                             if (t == typeof(Byte[]))
                             {
-                                s = "0x" + BitConverter.ToString(values[i] as Byte[]).Replace("-", "");
+                                s = $"0x{BitConverter.ToString(values[i] as Byte[]).Replace("-", string.Empty)}";
                             }
                             else if (t == typeof(DateTime))
                             {
-                                s = "'" + ((DateTime)values[i]).ToString("yyyy.MM.dd HH:mm:ss.fff") + "'";
+                                s = $"'{((DateTime)values[i]).ToString("yyyy.MM.dd HH:mm:ss.fff")}'";
                             }
                             else
                             {
-                                s = numeric ? values[i].ToString() : "'" + values[i].ToString().Replace("'", "''") + "'";
+                                s = numeric ? values[i].ToString() : $"'{values[i].ToString().Replace("'", "''")}'";
                             }
                             Thread.CurrentThread.CurrentCulture = ci;
                         }
                         ddl.Append(s);
                         if (i < count - 1) ddl.Append(", ");
                     }
-                    ddl.AppendLine(");" + Environment.NewLine);
+                    ddl.AppendLine($");{Environment.NewLine}");
                 }
                 dr.Close();
 
-                if (identity != null) ddl.AppendLine("SET IDENTITY_INSERT [" + node.Text + "] OFF;" + Environment.NewLine);
+                if (identity != null) ddl.AppendLine($"SET IDENTITY_INSERT [{node.Text}] OFF;{Environment.NewLine}");
             }
             return ddl.ToString();
         }
@@ -253,8 +253,8 @@ namespace CompactView
                 {
                     if (n.Checked)
                     {
-                        sbTitles.Append("\"" + n.Text + "\",");
-                        sb.Append("[" + n.Text + "], ");
+                        sbTitles.Append($"\"{n.Text}\",");
+                        sb.Append($"[{n.Text}], ");
                         count++;
                     }
                 }
@@ -263,7 +263,7 @@ namespace CompactView
                 if (!data) continue;
 
                 string fields = sb.ToString().TrimEnd(',', ' ');
-                string sqlSelect = "SELECT " + fields + " FROM [" + node.Text + "]";
+                string sqlSelect = $"SELECT {fields} FROM [{node.Text}]";
                 var dr = (IDataReader)db.ExecuteSql(sqlSelect, false);
                 object[] values = new object[count];
                 while (dr.Read())
@@ -274,7 +274,7 @@ namespace CompactView
                         string s;
                         if (dr.IsDBNull(i))
                         {
-                            s = "";
+                            s = string.Empty;
                         }
                         else
                         {
@@ -285,7 +285,7 @@ namespace CompactView
                                 t == typeof(Int64) || t == typeof(Decimal) || t == typeof(Double) || t == typeof(Single);
                             if (t == typeof(Byte[]))
                             {
-                                s = "0x" + BitConverter.ToString(values[i] as Byte[]).Replace("-", "");
+                                s = $"0x{BitConverter.ToString(values[i] as Byte[]).Replace("-", string.Empty)}";
                             }
                             else if (t == typeof(DateTime))
                             {
@@ -297,7 +297,7 @@ namespace CompactView
                             }
                             Thread.CurrentThread.CurrentCulture = ci;
                         }
-                        csv.Append("\"" + s + "\"");
+                        csv.Append($"\"{s}\"");
                         if (i < count - 1) csv.Append(",");
                     }
                     csv.AppendLine();
@@ -312,8 +312,8 @@ namespace CompactView
             if (string.IsNullOrEmpty(saveFileDialog1.FileName))
             {
                 saveFileDialog1.InitialDirectory = Path.GetDirectoryName(db.FileName);
-                string s = dbNode.ImageIndex == 0 ? "" : "_" + dbNode.Text;
-                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(db.FileName) + s + "_export.sql";
+                string s = dbNode.ImageIndex == 0 ? string.Empty : $"_{dbNode.Text}";
+                saveFileDialog1.FileName = $"{Path.GetFileNameWithoutExtension(db.FileName)}{s}_export.sql";
             }
             if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
 
@@ -361,15 +361,14 @@ namespace CompactView
         private void treeDb_BeforeCheck(object sender, TreeViewCancelEventArgs e)
         {
             if (e.Node.Parent == null || !e.Node.Checked) return;
-            TreeNode[] nodes = treeDb.Nodes.Find(e.Node.Parent.Text + "@" + e.Node.Text, true);
+            TreeNode[] nodes = treeDb.Nodes.Find($"{e.Node.Parent.Text}@{e.Node.Text}", true);
             if (nodes.Length <= 0 || nodes[0].Parent == null) return;
 
             bool used = false;
             for (int i = 0; i < nodes.Length; i++) if (nodes[i].Checked) used = true;
             if (!used) return;
 
-            string txt = string.Format("[{0}]-[{1}] {2}{3}[{4}]-[{5}].",
-                e.Node.Parent.Text, e.Node.Text, GlobalText.GetValue("UsedAsAForeignKey"), Environment.NewLine, nodes[0].Parent.Text, nodes[0].Text);
+            string txt = $"[{e.Node.Parent.Text}]-[{e.Node.Text}] {GlobalText.GetValue("UsedAsAForeignKey")}{Environment.NewLine}[{nodes[0].Parent.Text}]-[{nodes[0].Text}].";
             GlobalText.ShowWarning(txt);
         }
     }

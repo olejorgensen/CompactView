@@ -61,11 +61,11 @@ namespace CompactView
             groupBox1.Text = GlobalText.GetValue("Colors");
             label6.Text = GlobalText.GetValue("FontColor");
             label5.Text = GlobalText.GetValue("BackgroundColor");
-            label1.Text = GlobalText.GetValue("Line") + " 1";
-            label2.Text = GlobalText.GetValue("Line") + " 2";
-            label3.Text = GlobalText.GetValue("Line") + " 3";
-            label4.Text = GlobalText.GetValue("Line") + " 4";
-            label7.Text = GlobalText.GetValue("ColorSet") + ":";
+            label1.Text = $"{GlobalText.GetValue("Line")} 1";
+            label2.Text = $"{GlobalText.GetValue("Line")} 2";
+            label3.Text = $"{GlobalText.GetValue("Line")} 3";
+            label4.Text = $"{GlobalText.GetValue("Line")} 4";
+            label7.Text = $"{GlobalText.GetValue("ColorSet")}:";
             cbColorSet.Items[cbColorSet.Items.Count - 1] = GlobalText.GetValue("UserDefined");
             groupBox2.Text = GlobalText.GetValue("UserDefined");
             btnOk.Text = GlobalText.GetValue("Ok");

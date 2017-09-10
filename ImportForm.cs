@@ -96,7 +96,7 @@ namespace CompactView
                     if (regexAlterTable.IsMatch(ddl[i]) | regexCreateIndex.IsMatch(ddl[i]) | regexSetIdentity.IsMatch(ddl[i])) ok = true;
                     if (!ok)
                     {
-                        cmdError = ddl[i].Length <= 500 ? ddl[i] : ddl[i].Remove(500) + "...";
+                        cmdError = ddl[i].Length <= 500 ? ddl[i] : $"{ddl[i].Remove(500)}...";
                         break;
                     }
                 }
@@ -116,23 +116,23 @@ namespace CompactView
 
         private void RemoveTable(string tableName)
         {
-            string pattern = @"^CREATE\s+TABLE\s+\[" + tableName + @"\]";
+            string pattern = $@"^CREATE\s+TABLE\s+\[{tableName}\]";
             int pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline));
             if (pos >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^ALTER\s+TABLE\s+\[" + tableName + @"\]";
+            pattern = $@"^ALTER\s+TABLE\s+\[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^CREATE.*\s+INDEX.*\s+ON\s+\[" + tableName + @"\]";
+            pattern = $@"^CREATE.*\s+INDEX.*\s+ON\s+\[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^ALTER\s+TABLE.*\s+ADD\s+CONSTRAINT.*\s+FOREIGN\s+KEY.*\s+REFERENCES\s+\[" + tableName + @"\]";
+            pattern = $@"^ALTER\s+TABLE.*\s+ADD\s+CONSTRAINT.*\s+FOREIGN\s+KEY.*\s+REFERENCES\s+\[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^INSERT\s+INTO\s+\[" + tableName + @"\]";
+            pattern = $@"^INSERT\s+INTO\s+\[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
 
-            pattern = @"^SET\s+IDENTITY_INSERT\s+\[" + tableName + @"\]";
+            pattern = $@"^SET\s+IDENTITY_INSERT\s+\[{tableName}\]";
             while ((pos = ddl.FindIndex(cmd => Regex.IsMatch(cmd, pattern, RegexOptions.Singleline))) >= 0) ddl.RemoveAt(pos);
         }
 
@@ -211,7 +211,7 @@ namespace CompactView
             }
             catch (Exception ex)
             {
-                string sql = cmd.CommandText.Length <= 500 ? cmd.CommandText : cmd.CommandText.Remove(500) + "...";
+                string sql = cmd.CommandText.Length <= 500 ? cmd.CommandText : $"{cmd.CommandText.Remove(500)}...";
                 GlobalText.ShowError("ImportError", ex.Message + Environment.NewLine + Environment.NewLine + sql);
                 DialogResult = DialogResult.Abort;
             }

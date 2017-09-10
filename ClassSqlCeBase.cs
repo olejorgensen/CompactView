@@ -63,7 +63,7 @@ namespace CompactView
         /// </summary>
         public SqlCeBase()
         {
-            LastError = "";
+            LastError = string.Empty;
             regexSemicolon.Match("");
         }
 
@@ -128,9 +128,9 @@ namespace CompactView
             if (Connection != null && Connection.State != ConnectionState.Closed) Connection.Close();
             Connection = null;
             Version = null;
-            LastError = "";
-            FileName = "";
-            Password = "";
+            LastError = string.Empty;
+            FileName = string.Empty;
+            Password = string.Empty;
             BadPassword = false;
             _tableNames = null;
             _databaseInfo = null;
@@ -202,7 +202,7 @@ namespace CompactView
             int log = (int)Math.Log(0.1 + bytes, 1024);
             if (log > 4) log = 4;
             double n = bytes / Math.Pow(1024, log);
-            return String.Format("{0:N0} {1}", n, size[log]);
+            return $"{n:N0} {size[log]}";
         }
 
         private List<string> _tableNames = null;
@@ -232,7 +232,7 @@ namespace CompactView
         {
             if (Connection == null) return null;
             if (Connection.State == ConnectionState.Closed) Connection.Open();
-            LastError = "";
+            LastError = string.Empty;
 
             object command = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeCommand", false, BindingFlags.CreateInstance, null, new object[] { null, Connection }, null, null);
             var enumType = assembly.GetType("System.Data.SqlServerCe.ResultSetOptions");
@@ -253,7 +253,7 @@ namespace CompactView
                     }
                     catch (Exception e)
                     {
-                        LastError = GlobalText.GetValue("Query") + " " + QueryCount + ": " + (e.InnerException == null ? e.Message : e.InnerException.Message);
+                        LastError = $"{GlobalText.GetValue("Query")} {QueryCount}: {(e.InnerException == null ? e.Message : e.InnerException.Message)}";
                         return null;
                     }
                 }
@@ -268,7 +268,7 @@ namespace CompactView
 
         public bool Compact(string databaseFile, string password, string newPassword)
         {
-            string connectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword ?? "");
+            string connectionStr = password == newPassword ? null : $"Data Source=; Password={(newPassword ?? string.Empty)}";
             return Tool(databaseFile, password, "Compact", new object[] { connectionStr });
         }
 
@@ -281,7 +281,7 @@ namespace CompactView
 
         public bool Repair(string databaseFile, string password, string newPassword)
         {
-            string connectionStr = password == newPassword ? null : "Data Source=" + databaseFile + "; Password=" + (newPassword ?? "");
+            string connectionStr = password == newPassword ? null : $"Data Source={databaseFile}; Password={(newPassword ?? string.Empty)}";
             bool ok = DoRepair(databaseFile, password, new object[] { connectionStr, RepairOption.RecoverAllPossibleRows });
             if (ok) ok = DoRepair(databaseFile, newPassword, new object[] { connectionStr, RepairOption.DeleteCorruptedRows });
             return ok;
@@ -317,7 +317,7 @@ namespace CompactView
 
         public bool Shrink(string databaseFile, string password, string newPassword)
         {
-            string connectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword ?? "");
+            string connectionStr = password == newPassword ? null : $"Data Source=; Password={(newPassword ?? string.Empty)}";
             return Tool(databaseFile, password, "Shrink", null);
         }
 
@@ -332,7 +332,7 @@ namespace CompactView
             OpenConnection(toVersion, databaseFile, password);
             Close();
 
-            string newConnectionStr = password == newPassword ? null : "Data Source=; Password=" + (newPassword ?? "");
+            string newConnectionStr = password == newPassword ? null : $"Data Source=; Password={(newPassword ?? string.Empty)}";
             string connectionStr = GetConnectionString(databaseFile, password);
 
             try
@@ -363,7 +363,7 @@ namespace CompactView
 
             try
             {
-                LastError = "";
+                LastError = string.Empty;
                 object engine = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeEngine", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
                 return (bool)engine.GetType().InvokeMember("Verify", BindingFlags.InvokeMethod, null, engine, null);
             }
@@ -395,9 +395,9 @@ namespace CompactView
             }
             Close();
 
-            string connectionStr = "Data Source=" + databaseFile;
-            if (!string.IsNullOrEmpty(password)) connectionStr += "; Password=" + password + "; Encrypt=TRUE";
-            if (lcid != int.MinValue) connectionStr += "; LCID=" + lcid;
+            string connectionStr = $"Data Source={databaseFile}";
+            if (!string.IsNullOrEmpty(password)) connectionStr += $"; Password={password}; Encrypt=TRUE";
+            if (lcid != int.MinValue) connectionStr += $"; LCID={lcid}";
             try
             {
                 object engine = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeEngine", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
@@ -421,9 +421,9 @@ namespace CompactView
         public string GetColumnDataType(string table, string column)
         {
             DbCommand cmd = Connection.CreateCommand();
-            cmd.CommandText = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='" + table + "' AND COLUMN_NAME='" + column + "'";
+            cmd.CommandText = $"SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{table}' AND COLUMN_NAME='{column}'";
             DbDataReader dr = cmd.ExecuteReader();
-            string s = dr.Read() ? dr.GetString(0) : "";
+            string s = dr.Read() ? dr.GetString(0) : string.Empty;
             dr.Close();
             return s;
         }
@@ -459,14 +459,14 @@ namespace CompactView
 
             try
             {
-                assembly = Assembly.Load("System.Data.SqlServerCe, Version=" + version.AssemblyVersion + ", Culture=neutral, PublicKeyToken=89845dcd8080cc91");
+                assembly = Assembly.Load($"System.Data.SqlServerCe, Version={version.AssemblyVersion}, Culture=neutral, PublicKeyToken=89845dcd8080cc91");
             }
             catch (Exception e)
             {
                 try
                 {
-                    string desktop = (version.SqlceVersion == "3.1") ? "" : @"\Desktop";
-                    string assemblyPath = string.Format(@"Microsoft SQL Server Compact Edition\v{0}.{1}{2}\System.Data.SqlServerCe.dll", vers[0], vers[1], desktop);
+                    string desktop = (version.SqlceVersion == "3.1") ? string.Empty : @"\Desktop";
+                    string assemblyPath = $@"Microsoft SQL Server Compact Edition\v{vers[0]}.{vers[1]}{desktop}\System.Data.SqlServerCe.dll";
                     string progFilePath = Environment.GetFolderPath(IntPtr.Size == 4 ? Environment.SpecialFolder.ProgramFilesX86 : Environment.SpecialFolder.ProgramFiles);
                     assembly = Assembly.LoadFile(Path.Combine(progFilePath, assemblyPath));
                 }
@@ -511,9 +511,9 @@ namespace CompactView
 
         private string GetConnectionString(string databaseFile, string password)
         {
-            string connectionStr = "Data Source=\"" + databaseFile + "\"; Max Database Size=4091";
+            string connectionStr = $"Data Source=\"{databaseFile}\"; Max Database Size=4091";
             // Maximum 4 Gb (with value 4096 the program is not able to open databases above 2045 Mb)
-            if (!string.IsNullOrEmpty(password)) connectionStr += "; Password=\"" + password + "\"";
+            if (!string.IsNullOrEmpty(password)) connectionStr += $"; Password=\"{password}\"";
 
             bool readOnly = false;
             try
@@ -524,7 +524,7 @@ namespace CompactView
             catch
             {
             }
-            if (readOnly) connectionStr += "; Mode=Read Only; Temp Path=\"" + Path.GetTempPath() + "\"";
+            if (readOnly) connectionStr += $"; Mode=Read Only; Temp Path=\"{Path.GetTempPath()}\"";
 
             return connectionStr;
         }
