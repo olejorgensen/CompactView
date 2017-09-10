@@ -50,13 +50,6 @@ namespace CompactView
 
     public class SqlCeBase : IDisposable
     {
-        private static Version[] _availabeVersions =
-        {   // List of available versions starting with the oldest
-            // new Version("2.0", "2.0.0.0", 0x73616261),
-            new Version("3.1", "9.0.242.0", 0x002dd714),
-            new Version("3.5", "3.5.0.0", 0x00357b9d),
-            new Version("4.0", "4.0.0.0", 0x003d0900)
-        };
 
         /// <summary>
         /// Initialize a new instance of SqlCeDb
@@ -64,10 +57,15 @@ namespace CompactView
         public SqlCeBase()
         {
             LastError = string.Empty;
-            regexSemicolon.Match("");
+            regexSemicolon.Match(string.Empty);
         }
 
-        public static Version[] AvailableVersions { get { return _availabeVersions; } }
+        public static Version[] AvailableVersions { get; } = {   // List of available versions starting with the oldest
+            // new Version("2.0", "2.0.0.0", 0x73616261),
+            new Version("3.1", "9.0.242.0", 0x002dd714),
+            new Version("3.5", "3.5.0.0", 0x00357b9d),
+            new Version("4.0", "4.0.0.0", 0x003d0900)
+        };
         public DbConnection Connection { get; private set; }
         public string FileName { get; private set; }
         public string Password { get; private set; }
@@ -215,10 +213,11 @@ namespace CompactView
                 if (_tableNames != null)
                     return _tableNames;
                 _tableNames = new List<string>();
-                DbDataReader dr = ExecuteReader("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = N'TABLE'");
-                while (dr.Read())
-                    _tableNames.Add(dr.GetString(0));
-                dr.Close();
+                using (DbDataReader dr = ExecuteReader("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = N'TABLE'"))
+                {
+                    while (dr.Read())
+                        _tableNames.Add(dr.GetString(0));
+                }
                 return _tableNames;
             }
         }
@@ -238,7 +237,7 @@ namespace CompactView
 
             if (Connection.State == ConnectionState.Closed)
                 Connection.Open();
- 
+
             LastError = string.Empty;
 
             object command = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeCommand", false, BindingFlags.CreateInstance, null, new object[] { null, Connection }, null, null);
@@ -255,7 +254,7 @@ namespace CompactView
                     try
                     {
                         command.GetType().InvokeMember("CommandText", BindingFlags.SetProperty, null, command, new object[] { m.Value.Trim() });
-                        object resultset = command.GetType().GetMethod("ExecuteResultSet", new System.Type[] { enumType }, null).Invoke(command, new object[] { options });
+                        object resultset = command.GetType().GetMethod("ExecuteResultSet", new Type[] { enumType }, null).Invoke(command, new object[] { options });
                         bool scrollable = (bool)resultset.GetType().InvokeMember("Scrollable", BindingFlags.GetProperty, null, resultset, null);
                         if (scrollable)
                             result = resultset;
@@ -310,7 +309,7 @@ namespace CompactView
             {
                 object engine = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeEngine", false, BindingFlags.CreateInstance, null, new object[] { connectionStr }, null, null);
                 var enumType = assembly.GetType("System.Data.SqlServerCe.RepairOption");
-                engine.GetType().GetMethod("Repair", new System.Type[] { typeof(string), enumType }, null).Invoke(engine, parameters);
+                engine.GetType().GetMethod("Repair", new Type[] { typeof(string), enumType }, null).Invoke(engine, parameters);
                 engine.GetType().InvokeMember("Dispose", BindingFlags.InvokeMethod, null, engine, null);
                 return true;
             }
@@ -560,7 +559,6 @@ namespace CompactView
             {
                 reader.BaseStream.Seek(16, SeekOrigin.Begin);
                 sdfCodeVersion = reader.ReadUInt32();
-                reader.Close();
             }
             return AvailableVersions.FirstOrDefault(version => version.SdfCodeVersion == sdfCodeVersion);
         }
