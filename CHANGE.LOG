@@ -1,0 +1,114 @@
+2017/07/13  v1.4.14  Fix bug: Failed to display tables of more than 255
+                     fields.
+2017/02/17  v1.4.13  Right-clicking on the header causes the width of
+                     the column fit all cells.
+					 Added German translation (Thanks to Peet Baldem).
+2015/11/11  v1.4.12  Added traditional and simplified Chinese 
+                     translations (Thanks to Jordan Chen).
+2015/08/31  v1.4.11  Added Turkish translation.
+2015/08/05  v1.4.10  Add shortcut key F5 to execute queries.
+2015/04/21  v1.4.9   Fix bug: Unable to open large databases (Thanks
+                     to Niels).
+2015/04/04  v1.4.8   Fix bug: Failed to open databases that contain
+                     reserved words in the filename or databases with
+                     read only files.
+2014/11/29  v1.4.7   Fix bug: Unable to open databases above 2045Mb.
+2014/11/23  v1.4.6   Fix bug: Missing space after the word DEFAULT in
+                     the schema viewer.
+2014/09/25  v1.4.5   Fix bug: Wrong UTF8 characters loaded using the
+                     "Load SQL query" menu of the SQL editor.
+2014/06/06  v1.4.4   Allow the database to grow at least to twice its
+                     current size when executing queries.
+2014/03/08  v1.4.3   Fix bug: Error shrinking database (Thanks to Joel).
+2014/02/18  v1.4.2   Fix bug: Error when sorting columns of type bit or
+                     varbinary.
+2014/02/15  v1.4.1   Allows sorting by columns.
+2013/10/19  v1.4.0   The export function now depends on selected table 
+                     (to export all the database just select the 
+                     database).
+                     When a table is selected then is possible to export
+                     to csv format.
+                     Added Czech translation.
+2013/04/20  v1.3.10  Fix bug: Sharing violation when opening a database
+                     (Thanks to Klaus Gütter).
+2012/10/29  v1.3.9   Installer updated to incorporate the latest version
+                     of the Russian language file.
+2012/10/05  v1.3.9   Added the entry "TranslationInfo" at the beginning
+                     of the translation file to display it in the About 
+                     dialog.
+2012/09/29  v1.3.8   Fix bug: Menus "Print" and "Print preview" were not
+                     translated.
+                     Allow to translate the information fields of the 
+                     database.
+                     Added context menu to the data viewer for allow
+                     copying texts, byte arrays and images.
+2012/08/24  v1.3.7   Fix bug: Error displaying images after modifications
+                     made in version 1.3.6.
+2012/08/23  v1.3.6   Fix bug: Error showing BINARY types and VARBINARY.
+2012/07/25  v1.3.5   Fix bug: Can not remove values and leave an empty
+                     string when editing text columns in database
+                     version 4.
+                     Added feature to run selected text in Query editor.
+                     Removed the error dialog displayed when opening a
+                     database which needs password.
+2012/07/12  v1.3.4   Fix bug: Error on exporting data when a column is 
+                     deselected.
+2012/03/08  v1.3.3   Redesign of the CompactView icon.
+                     Fix bug: Error opening databases bigger than 256MB.
+2012/02/27  v1.3.2   Added support to view rowversion and timestamp
+                     columns.
+2012/02/15  v1.3.1   Fix bug: Localized characters and special symbols
+                     causes errors in the query editor.
+                     Fix bug: The program hangs when running insert
+                     commands in certain circumstances.
+                     Update data viewer when run "insert", "update" or
+                     "delete" commands.
+2012/01/02  v1.3.0   Modified the method that opens the database to allow
+                     generating an exception if the assembly is not found.
+                     Added feature to run queries that contain multiple
+                     SQL statements each of which ends with a semicolon.
+                     Added "Print" option to context menu in SQL Schema
+                     viewer and Query editor.
+                     Fix bug: Erroneous syntax highlighting when more than
+                     a quoted string appears within a same line.
+                     Fix bug: Reopen a database after using tools dialog 
+                     box, throws some errors. (Thanks to Berthier Lemieux)
+                     Added main menu and redistribution of old buttons on
+                     the toolbar.
+                     Added menu entries to "Export" to SQL and "Import"
+                     from SQL.
+                     Improve SQL highlight performance for large files.
+2011/11/14  v1.2.4   When selecting "Allow editing", editing mode is
+                     automatically started when you select each cell.
+                     Fix bug: In SQL Schema viewer the IDENTITY columns
+                     showing next value instead of seed value.
+                     Fix bug: Config folder was not created correctly.
+2011/11/10  v1.2.3   Fix bug: SQL Schema viewer error. Delete and update
+                     rules of foreign keys displayed inverted.
+                     Fix bug: An exception is generated when run a query
+                     that not generates rows.
+                     Executing queries of type "update", "drop" or "alter"
+                     updates the tree view to show all tables.
+2011/11/08  v1.2.2   Improvements to SQL text highlighting.
+                     Added context menu to the query editor for enable
+                     options "Cut", "Copy", "Paste", "Load from file" and
+                     "Save to file".
+                     Added context menu to the SQL Schema viewer for
+                     enable options "Copy" and "Save to file".
+                     SQL Schema viewer show the full schema of the
+                     database selecting his name in the tree view.
+                     Fix minor bug: Recent files order.
+2011/10/29  v1.2.1   The About dialog show the current language code under
+                     the CompactView icon.
+2011/10/27  v1.2.0   Added options button to customize colors.
+                     Last main window size an position is saved and 
+                     restored in the next execution.
+2011/10/01  v1.1.0   Disappear different versions of program for databases
+                     SQLCE35 and SQLCCE40. Now CompactView can open any 
+                     database of versions 3.1, 3.5 or 4.0
+                     Added tool for create new databases.
+2011/09/27  v1.0.2   Fix bug: An exception is generated when run a query
+                     that not generates rows.
+2011/09/24  v1.0.1   The configuration file of the application happens to
+                     be deleted in case of it be corrupted.
+2011/09/23  v1.0.0   First release.
