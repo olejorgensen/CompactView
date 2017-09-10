@@ -213,8 +213,7 @@ namespace CompactView
         public static string GetValue(string key)
         {
             if (string.IsNullOrEmpty(CultureCode)) CultureCode = System.Globalization.CultureInfo.CurrentCulture.Name;
-            string value;
-            return list.TryGetValue(key, out value) ? value : "";
+            return list.TryGetValue(key, out string value) ? value : "";
         }
 
         public static void ShowError(string key)
