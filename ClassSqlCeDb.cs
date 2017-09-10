@@ -65,7 +65,7 @@ namespace CompactView
     {
         public override string ToString()
         {
-            StringBuilder str = new StringBuilder();
+            var str = new StringBuilder();
             foreach (string column in this)
             {
                 if (column.StartsWith("[")) str.Append(column + ", "); else str.Append("[" + column + "], ");
@@ -116,7 +116,7 @@ namespace CompactView
 
         public string GetDatabaseDdl()
         {
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
             string newLine = "";
             foreach (string tableName in TableNames)
             {
@@ -132,7 +132,7 @@ namespace CompactView
         public string GetTableDdl(string tableName, bool table, bool primaryKeys, bool indexes, bool foreignKeys)
         {
             if (!tablesDdl.ContainsKey(tableName)) LoadTableDdl(tableName);
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
             if (table) ddl.Append(tablesDdl[tableName]);
             if (primaryKeys) ddl.Append(primaryKeysDdl[tableName]);
             if (indexes) ddl.Append(indexesDdl[tableName]);
@@ -159,7 +159,7 @@ namespace CompactView
         public TreeNode[] GetSchemaNodes(string tableName)
         {
             string sWhere = tableName == null ? "" : "WHERE c.TABLE_NAME = '" + tableName + "' ";
-            List<TreeNode> nodes = new List<TreeNode>();
+            var nodes = new List<TreeNode>();
             DbCommand cmd = Connection.CreateCommand();
             cmd.CommandText = "SELECT c.COLUMN_NAME, c.TABLE_NAME, t.CONSTRAINT_TYPE FROM INFORMATION_SCHEMA.COLUMNS AS c " +
                 "LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS u ON u.TABLE_NAME = c.TABLE_NAME AND u.COLUMN_NAME = c.COLUMN_NAME " +
@@ -216,7 +216,7 @@ namespace CompactView
 
         private void LoadTableDdl(string tableName)
         {
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
             ddl.AppendFormat("CREATE TABLE [{0}]{1}({1}", tableName, Environment.NewLine);
             AddColumnsDdl(ref ddl, tableName);
             ddl.AppendFormat("{0});{0}", Environment.NewLine);
@@ -253,7 +253,7 @@ namespace CompactView
 
         private Column GetColumn(ref DbDataReader dr)
         {
-            Column col = new Column();
+            var col = new Column();
             col.ColumnName = dr.GetString(0);
             col.ColumnHasDefault = (dr.IsDBNull(1) ? false : dr.GetBoolean(1));
             col.ColumnDefault = (dr.IsDBNull(2) ? string.Empty : dr.GetString(2).Trim());
@@ -271,7 +271,7 @@ namespace CompactView
 
         private Index GetIndex(ref DbDataReader dr)
         {
-            Index idx = new Index();
+            var idx = new Index();
             idx.IndexName = dr.GetString(0);
             idx.Unique = dr.GetBoolean(2);
             idx.Clustered = dr.GetBoolean(3);
@@ -283,7 +283,7 @@ namespace CompactView
 
         private Constraint GetConstraint(ref DbDataReader dr)
         {
-            Constraint cst = new Constraint();
+            var cst = new Constraint();
             cst.ConstraintTableName = dr.GetString(0);
             cst.ConstraintName = dr.GetString(1);
             cst.UniqueConstraintTableName = dr.GetString(2);
@@ -415,7 +415,7 @@ namespace CompactView
 
         public List<string> GetColumns(string tableName)
         {
-            List<string> list = new List<string>();
+            var list = new List<string>();
 
             DbCommand cmd = Connection.CreateCommand();
             cmd.CommandText = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS " +
@@ -437,7 +437,7 @@ namespace CompactView
                 "WHERE c.CONSTRAINT_TYPE = 'PRIMARY KEY' AND c.TABLE_NAME = '" + tableName + "' " +
 				"ORDER BY c.CONSTRAINT_NAME, u.ORDINAL_POSITION";
             DbDataReader dr = cmd.ExecuteReader();
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
             bool first = true;
             while (dr.Read())
             {
@@ -460,7 +460,7 @@ namespace CompactView
                 "AND (SUBSTRING(COLUMN_NAME, 1,5) <> '__sys') " +
                 "ORDER BY INDEX_NAME, ORDINAL_POSITION";
             DbDataReader dr = cmd.ExecuteReader();
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
             string prevName = "";
             while (dr.Read())
             {
@@ -492,7 +492,7 @@ namespace CompactView
                 "FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS " +
                 "WHERE CONSTRAINT_TABLE_NAME='" + tableName + "'";
             DbDataReader dr = cmd.ExecuteReader();
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
             while (dr.Read())
             {
                 Constraint cst = GetConstraint(ref dr);

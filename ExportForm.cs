@@ -55,7 +55,7 @@ namespace CompactView
             if (height > maxHeight) height = maxHeight;
             this.Height = height;
 
-            DoubleClickIntercept doubleClickIntercept = new DoubleClickIntercept(treeDb.Handle);  // Disable double click to avoid TreeView double click check bug
+            var doubleClickIntercept = new DoubleClickIntercept(treeDb.Handle);  // Disable double click to avoid TreeView double click check bug
         }
 
         private void SetCultureTexts()
@@ -133,28 +133,28 @@ namespace CompactView
                 }
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string s in ddl) sb.AppendLine(s + ";" + Environment.NewLine);
             return sb.ToString();
         }
 
         private string GetExportTablesSchema(SqlCeDb db, TreeView treeView)
         {
-            List<string> ddl = new List<string>(Regex.Split(db.GetDatabaseDdl(), @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
+            var ddl = new List<string>(Regex.Split(db.GetDatabaseDdl(), @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
             for (int i = ddl.Count - 1; i >= 0; i--) if (!ddl[i].StartsWith("CREATE TABLE ")) ddl.RemoveAt(i);
             return RemoveUncheck(ddl, treeView);
         }
 
         private string GetExportConstraintsSchema(SqlCeDb db, TreeView treeView)
         {
-            List<string> ddl = new List<string>(Regex.Split(db.GetDatabaseDdl(), @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
+            var ddl = new List<string>(Regex.Split(db.GetDatabaseDdl(), @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
             for (int i = ddl.Count - 1; i >= 0; i--) if (ddl[i].StartsWith("CREATE TABLE ")) ddl.RemoveAt(i);
             return RemoveUncheck(ddl, treeView);
         }
 
         private string ChangeIdentity(string tablesDdl)
         {
-            List<string> ddl = new List<string>(Regex.Split(tablesDdl, @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
+            var ddl = new List<string>(Regex.Split(tablesDdl, @";\s*").Where(s => !string.IsNullOrWhiteSpace(s)));
             for (int i = 0; i < ddl.Count; i++)
             {
                 string identity = null;
@@ -163,18 +163,18 @@ namespace CompactView
                 if (identity != null) ddl[i] = Regex.Replace(ddl[i], @"(?<=\r\n\ *\[.*\].* IDENTITY \()\d+(?=,)", identity, RegexOptions.Singleline);
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (string s in ddl) sb.AppendLine(s + ";" + Environment.NewLine);
             return sb.ToString();
         }
 
         private string GetExportData(SqlCeDb db, TreeView treeView)
         {
-            StringBuilder ddl = new StringBuilder();
+            var ddl = new StringBuilder();
 
             foreach (TreeNode node in treeView.Nodes)
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 int count = 0;
                 if (node.Checked) foreach (TreeNode n in node.Nodes)
                 {
@@ -192,7 +192,7 @@ namespace CompactView
 
                 string fields = sb.ToString().TrimEnd(',', ' ');
                 string sqlSelect = "SELECT " + fields + " FROM [" + node.Text + "]";
-                IDataReader dr = (IDataReader)db.ExecuteSql(sqlSelect, false);
+                var dr = (IDataReader)db.ExecuteSql(sqlSelect, false);
                 object[] values = new object[count];
                 while (dr.Read())
                 {
@@ -244,12 +244,12 @@ namespace CompactView
             foreach (TreeNode node in treeView.Nodes) if (node.Checked) ncount++;
             if (ncount != 1) return null;
 
-            StringBuilder csv = new StringBuilder();
+            var csv = new StringBuilder();
 
             foreach (TreeNode node in treeView.Nodes)
             {
-                StringBuilder sb = new StringBuilder();
-                StringBuilder sbTitles = new StringBuilder();
+                var sb = new StringBuilder();
+                var sbTitles = new StringBuilder();
                 int count = 0;
                 if (node.Checked) foreach (TreeNode n in node.Nodes)
                 {
@@ -266,7 +266,7 @@ namespace CompactView
 
                 string fields = sb.ToString().TrimEnd(',', ' ');
                 string sqlSelect = "SELECT " + fields + " FROM [" + node.Text + "]";
-                IDataReader dr = (IDataReader)db.ExecuteSql(sqlSelect, false);
+                var dr = (IDataReader)db.ExecuteSql(sqlSelect, false);
                 object[] values = new object[count];
                 while (dr.Read())
                 {
@@ -319,7 +319,7 @@ namespace CompactView
             }
             if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
 
-            StreamWriter writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
+            var writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
             if (dbNode.ImageIndex == 1 && saveFileDialog1.FilterIndex == 3)  // CSV
             {
                 writer.Write(GetCsvExportData(db, treeDb, rbAll.Checked || rbSchema.Checked, rbAll.Checked || rbData.Checked));

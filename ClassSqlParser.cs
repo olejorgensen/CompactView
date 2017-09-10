@@ -65,7 +65,7 @@ namespace CompactView
 
         public SqlParser()
         {
-            StringBuilder pattern = new StringBuilder(@"(?<A>\b(");
+            var pattern = new StringBuilder(@"(?<A>\b(");
             foreach (string key in keywords) pattern.Append(key + "|");
             pattern.Length--;
             pattern.Append(@")\b)");

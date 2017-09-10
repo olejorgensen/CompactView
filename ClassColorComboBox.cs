@@ -117,19 +117,19 @@ namespace CompactView
 
 		private static void ComboBox_DrawItem(object sender, DrawItemEventArgs e)
 		{
-			Graphics graphics = Graphics.FromImage(buffer);  // Drawing through the buffer to avoid flickering
+			var graphics = Graphics.FromImage(buffer);  // Drawing through the buffer to avoid flickering
 			graphics.FillRectangle(Brushes.White, 0, 0, e.Bounds.Width, e.Bounds.Height);
 			if (e.Index < 0) return;
 
 			bool selected = colorNames[e.Index] == (sender as ComboBox).ForeColor.Name;
 			if (((e.State & DrawItemState.Selected) != 0 || selected) && e.Bounds.Top != 3)
 			{
-				Rectangle rectBounds = new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1);
+				var rectBounds = new Rectangle(0, 0, e.Bounds.Width - 1, e.Bounds.Height - 1);
 				Pen pen = selected ? blackDotPen : grayDotPen;
 				graphics.DrawRectangle(pen, rectBounds);
 			}
 
-			Rectangle rectColor = new Rectangle(1, 1, 30, e.Bounds.Height - 3);
+			var rectColor = new Rectangle(1, 1, 30, e.Bounds.Height - 3);
 			graphics.FillRectangle(brushes[e.Index], rectColor);
 			graphics.DrawRectangle(Pens.Black, rectColor);
 			graphics.DrawString(colorNames[e.Index], e.Font, Brushes.Black, 34, 1);
@@ -138,13 +138,13 @@ namespace CompactView
 
 		private static void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			ComboBox comboBox = sender as ComboBox;
+			var comboBox = sender as ComboBox;
 			if (!comboBox.DroppedDown) ComboBox_DropDownClosed(sender, e);
 		}
 
 		private static void ComboBox_DropDownClosed(object sender, EventArgs e)
 		{
-			ComboBox comboBox = sender as ComboBox;
+			var comboBox = sender as ComboBox;
 			comboBox.ForeColor = comboBox.SelectedIndex >= 0 ? Color.FromName(colorNames[comboBox.SelectedIndex]) : Color.Transparent;
 		}
 	}

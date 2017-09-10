@@ -76,7 +76,7 @@ namespace CompactView
 
         public void Load()
         {
-            DataTable table = new DataTable("Settings");
+            var table = new DataTable("Settings");
 
             try
             {
@@ -110,7 +110,7 @@ namespace CompactView
 
         public void Save()
         {
-            DataTable table = new DataTable("Settings");
+            var table = new DataTable("Settings");
             table.Columns.Add("X", typeof(int));
             table.Columns.Add("Y", typeof(int));
             table.Columns.Add("Width", typeof(int));
@@ -139,7 +139,7 @@ namespace CompactView
 
             try
             {
-                XmlTextWriter xw = new XmlTextWriter(FileName, Encoding.UTF8) { Formatting = Formatting.Indented };
+                var xw = new XmlTextWriter(FileName, Encoding.UTF8) { Formatting = Formatting.Indented };
                 table.WriteXml(xw, XmlWriteMode.WriteSchema);
                 xw.Close();
             }

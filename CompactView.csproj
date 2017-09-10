@@ -172,6 +172,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitattributes" />
+    <Content Include=".gitignore" />
     <Content Include="CompactView.ico" />
     <Content Include="images\clear.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -65,17 +65,17 @@ namespace CompactView
             string cmdError = null;
             treeDb.Nodes.Clear();
             treeDb.BeginUpdate();
-            StreamReader reader = new StreamReader(fileName);
+            var reader = new StreamReader(fileName);
             ddl = new List<string>();
             // Regular expression to search texts finished with semicolons that is not between single quotes
             for (Match m = Regex.Match(reader.ReadToEnd(), @"(?:[^;']|'[^']*')+;\s*", RegexOptions.Compiled); m.Success; m = m.NextMatch()) ddl.Add(m.Value.TrimEnd('\r', '\n'));
 
             RegexOptions options = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase;
-            Regex regexCreateTable = new Regex(@"(?<=^CREATE\s+TABLE\s+\[)[^\]]*(?=\]\s+\([^\)]*\))", options);
-            Regex regexInsert = new Regex(@"(?<=^INSERT\s+INTO\s+\[)[^\]]*(?=\]\s+\([^\)]*\)\s+VALUES\s+\([^\)]*\))", options);
-            Regex regexAlterTable = new Regex(@"^ALTER\s+TABLE\s+\[", options);
-            Regex regexCreateIndex = new Regex(@"^CREATE\s+.*INDEX\s+", options);
-            Regex regexSetIdentity = new Regex(@"^SET\s+IDENTITY_INSERT\s+\[", options);
+            var regexCreateTable = new Regex(@"(?<=^CREATE\s+TABLE\s+\[)[^\]]*(?=\]\s+\([^\)]*\))", options);
+            var regexInsert = new Regex(@"(?<=^INSERT\s+INTO\s+\[)[^\]]*(?=\]\s+\([^\)]*\)\s+VALUES\s+\([^\)]*\))", options);
+            var regexAlterTable = new Regex(@"^ALTER\s+TABLE\s+\[", options);
+            var regexCreateIndex = new Regex(@"^CREATE\s+.*INDEX\s+", options);
+            var regexSetIdentity = new Regex(@"^SET\s+IDENTITY_INSERT\s+\[", options);
 
             for (int i = 0; i < ddl.Count; i++)
             {

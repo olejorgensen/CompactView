@@ -229,7 +229,7 @@ public class RichTextBoxHelper
 
     public void Print(PrintType printType, Margins margins, BeforePagePrintDelegate beforePagePrintDelegate)
     {
-        PrintDocument doc = new PrintDocument();
+        var doc = new PrintDocument();
         doc.BeginPrint += new PrintEventHandler(this.Document_BeginPrint);
         doc.EndPrint += new PrintEventHandler(this.Document_EndPrint);
         doc.PrintPage += new PrintPageEventHandler(this.Document_PrintPage);
@@ -261,7 +261,7 @@ public class RichTextBoxHelper
                     }
 
                     MeasureOnly = false;
-                    PrintDialog printDlg = new PrintDialog();
+                    var printDlg = new PrintDialog();
                     printDlg.Document = doc;
                     printDlg.AllowSomePages = true;
                     printDlg.PrinterSettings.FromPage = 1;
@@ -272,7 +272,7 @@ public class RichTextBoxHelper
                     break;
                 case PrintType.PrintPreview:
                     MeasureOnly = false;
-                    PrintPreviewDialog previewDlg = new PrintPreviewDialog();
+                    var previewDlg = new PrintPreviewDialog();
                     previewDlg.WindowState = FormWindowState.Maximized;
                     previewDlg.Document = doc;
                     previewDlg.ShowIcon = false;
@@ -393,7 +393,7 @@ public class RichTextBoxHelper
     public int DoPrint(int posIniChar, int posEndChar, PrintPageEventArgs e)
     {
         // Fill in the FORMATRANGE struct
-        FORMATRANGE fr = FORMATRANGE.Set(e, posIniChar, posEndChar);
+        var fr = FORMATRANGE.Set(e, posIniChar, posEndChar);
 
         // Allocate memory for the FORMATRANGE struct and copy this to the memory
         IntPtr lParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(fr));
@@ -436,7 +436,7 @@ public class RichTextBoxHelper
     /// </summary>
     public void PrintDone()
     {
-        IntPtr lParam = new IntPtr(0);
+        var lParam = new IntPtr(0);
         SendMessage(richTextBox.Handle, EM_FORMATRANGE, 0, lParam);
     }
 
@@ -497,7 +497,7 @@ public class RichTextBoxHelper
     /// <returns>Returns true on success, false on failure</returns>
     public static bool SelectionFontName(RichTextBox richTextBox, string fontName)
     {
-        CHARFORMAT2 cf = new CHARFORMAT2();
+        var cf = new CHARFORMAT2();
         cf.cbSize = Marshal.SizeOf(cf);
         cf.dwMask = CFM_FACE;
         cf.szFaceName = fontName.Length > 32 ? fontName.Remove(32) : fontName;
@@ -517,7 +517,7 @@ public class RichTextBoxHelper
     /// <returns>Returns true on success, false on failure</returns>
     public static bool SelectionFontSize(RichTextBox richTextBox, int fontSize)
     {
-        CHARFORMAT2 cf = new CHARFORMAT2();
+        var cf = new CHARFORMAT2();
         cf.cbSize = Marshal.SizeOf(cf);
         cf.dwMask = CFM_SIZE;
         cf.yHeight = fontSize * 20;   // yHeight is in 1/20 pt
@@ -567,7 +567,7 @@ public class RichTextBoxHelper
     /// <returns>Returns true on success, false on failure</returns>
     public static bool WordFontColor(RichTextBox richTextBox, Color color)
     {
-        CHARFORMAT2 cf = new CHARFORMAT2();
+        var cf = new CHARFORMAT2();
         cf.cbSize = Marshal.SizeOf(cf);
         cf.crTextColor = ColorTranslator.ToWin32(color);
         cf.crBackColor = ColorTranslator.ToWin32(Color.Empty);
@@ -601,7 +601,7 @@ public class RichTextBoxHelper
     /// <returns>Returns true on success, false on failure</returns>
     private static bool SetSelectionStyle(RichTextBox richTextBox, Color fontColor, Color backColor, UInt32 mask, UInt32 effect)
     {
-        CHARFORMAT2 cf = new CHARFORMAT2();
+        var cf = new CHARFORMAT2();
         cf.cbSize = Marshal.SizeOf(cf);
         cf.crTextColor = ColorTranslator.ToWin32(fontColor);
         cf.crBackColor = ColorTranslator.ToWin32(backColor);
@@ -624,14 +624,14 @@ public class RichTextBoxHelper
     public static int GetFirstVisibleCharIndex(RichTextBox richTextBox)
     {
         const int EM_CHARFROMPOS = 0x00D7;
-        Point point = new Point(1, 1);
+        var point = new Point(1, 1);
         return SendMessage(richTextBox.Handle, EM_CHARFROMPOS, 0, ref point);
     }
 
     public static int GetLastVisibleCharIndex(RichTextBox richTextBox)
     {
         const int EM_CHARFROMPOS = 0x00D7;
-        Point point = new Point(richTextBox.ClientRectangle.Right - 1, richTextBox.ClientRectangle.Bottom - 1);
+        var point = new Point(richTextBox.ClientRectangle.Right - 1, richTextBox.ClientRectangle.Bottom - 1);
         return SendMessage(richTextBox.Handle, EM_CHARFROMPOS, 0, ref point);
     }
 

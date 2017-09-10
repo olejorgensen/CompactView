@@ -59,7 +59,7 @@ namespace CompactView
                 string fileName = XmlName(_cultureCode);
                 if (File.Exists(fileName))
                 {
-                    DataTable table = new DataTable("Dictionary");
+                    var table = new DataTable("Dictionary");
                     table.ReadXml(fileName);
                     foreach (DataRow row in table.Rows) if (list.ContainsKey(row[0].ToString())) list[row[0].ToString()] = row[1].ToString();
                 }
@@ -200,11 +200,11 @@ namespace CompactView
             string fileName = XmlName("en-EN");
             if (!File.Exists(fileName))
             {
-                DataTable table = new DataTable("Dictionary");
+                var table = new DataTable("Dictionary");
                 table.Columns.Add("Key", typeof(string));
                 table.Columns.Add("Value", typeof(string));
                 foreach (KeyValuePair<string, string> row in list) table.Rows.Add(row.Key, row.Value);
-                XmlTextWriter xw = new XmlTextWriter(fileName, Encoding.UTF8) { Formatting = Formatting.Indented };
+                var xw = new XmlTextWriter(fileName, Encoding.UTF8) { Formatting = Formatting.Indented };
                 table.WriteXml(xw, XmlWriteMode.WriteSchema);
                 xw.Close();
             }

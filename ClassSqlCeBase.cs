@@ -164,7 +164,7 @@ namespace CompactView
 
                 try
                 {
-                    List<KeyValuePair<string, string>> dbInfo = (List<KeyValuePair<string, string>>)Connection.GetType().InvokeMember("GetDatabaseInfo", BindingFlags.InvokeMethod, null, Connection, null);
+                    var dbInfo = (List<KeyValuePair<string, string>>)Connection.GetType().InvokeMember("GetDatabaseInfo", BindingFlags.InvokeMethod, null, Connection, null);
                     foreach (KeyValuePair<string, string> key in dbInfo) _databaseInfo.Rows.Add(System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(key.Key), key.Value);
                 }
                 catch
@@ -521,7 +521,7 @@ namespace CompactView
             bool readOnly = false;
             try
             {
-                FileInfo fileInfo = new FileInfo(databaseFile);
+                var fileInfo = new FileInfo(databaseFile);
                 readOnly = (fileInfo.Attributes & FileAttributes.ReadOnly) != 0;
             }
             catch
@@ -535,7 +535,7 @@ namespace CompactView
         private Version GetSdfVersion(string filePath)
         {
             UInt32 sdfCodeVersion;
-            using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            using (var reader = new BinaryReader(File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
                 reader.BaseStream.Seek(16, SeekOrigin.Begin);
                 sdfCodeVersion = reader.ReadUInt32();

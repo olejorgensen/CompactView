@@ -246,7 +246,7 @@ namespace CompactView
                     Reset();
                     if (badPassword)
                     {
-                        GetPassForm form = new GetPassForm();
+                        var form = new GetPassForm();
                         if (form.ShowDialog() == DialogResult.OK) LoadDatabase(fileName, form.edPass.Text.Trim());
                     }
                 }
@@ -313,9 +313,9 @@ namespace CompactView
 
         private Bitmap CreateBmp(string text, IntPtr handle, Font font, Color foreColor)
         {
-            Graphics g = Graphics.FromHwnd(handle);
-            Size size = g.MeasureString(text, font).ToSize();
-            Bitmap bmp = new Bitmap(size.Width, size.Height, g);
+            var g = Graphics.FromHwnd(handle);
+            var size = g.MeasureString(text, font).ToSize();
+            var bmp = new Bitmap(size.Width, size.Height, g);
 
             g = Graphics.FromImage(bmp);
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -328,9 +328,9 @@ namespace CompactView
 
         private Image CreatePng(string text, IntPtr handle, Font font, Color foreColor)
         {
-            Graphics g = Graphics.FromHwnd(handle);
-            Size size = g.MeasureString(text, font).ToSize();
-            Bitmap bmp = new Bitmap(size.Width, size.Height, g);
+            var g = Graphics.FromHwnd(handle);
+            var size = g.MeasureString(text, font).ToSize();
+            var bmp = new Bitmap(size.Width, size.Height, g);
 
             g = Graphics.FromImage(bmp);
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -338,7 +338,7 @@ namespace CompactView
             g.DrawString(text, font, new SolidBrush(foreColor), 0, 0);
             g.Flush();
 
-            MemoryStream ms = new MemoryStream();
+            var ms = new MemoryStream();
             bmp.Save(ms, ImageFormat.Png);
             bmp.Dispose();
             return Image.FromStream(ms);
@@ -549,7 +549,7 @@ namespace CompactView
             bool onQuery = ((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl == rtbQuery;
             RichTextBox rtb = onQuery ? rtbQuery : rtbDdl;
             bool all = rtb.SelectionLength == 0;
-            StreamWriter writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
+            var writer = new StreamWriter(saveFileDialog1.FileName, false, Encoding.UTF8);
             writer.Write(all ? rtb.Text : rtb.SelectedText);
             writer.Close();
         }
@@ -739,7 +739,7 @@ namespace CompactView
             {
                 int i = GetOleHeaderPos(bytes);
                 Image image;
-                using (MemoryStream ms = new MemoryStream(bytes, i, bytes.Length - i)) image = Image.FromStream(ms);
+                using (var ms = new MemoryStream(bytes, i, bytes.Length - i)) image = Image.FromStream(ms);
                 return image;
             }
             catch (ArgumentException)

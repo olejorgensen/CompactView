@@ -108,7 +108,7 @@ namespace CompactView
                 if (db.BadPassword)
                 {
                     db.Close();
-                    GetPassForm form = new GetPassForm();
+                    var form = new GetPassForm();
                     if (form.ShowDialog() == DialogResult.OK) LoadDatabase(fileName, form.edPass.Text.Trim());
                 }
             }
