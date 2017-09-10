@@ -192,8 +192,10 @@ namespace CompactView
                     if (fieldName != "") node.Nodes.Add(referenc, fieldName, index, index).Checked = true;
                     if (dr.GetString(1) != sTableName)
                     {
-                        node = new TreeNode(dr.GetString(1), 0, 0);
-                        node.Checked = true;
+                        node = new TreeNode(dr.GetString(1), 0, 0)
+                        {
+                            Checked = true
+                        };
                         nodes.Add(node);
                     }
                     sTableName = dr.GetString(1);
@@ -253,45 +255,51 @@ namespace CompactView
 
         private Column GetColumn(ref DbDataReader dr)
         {
-            var col = new Column();
-            col.ColumnName = dr.GetString(0);
-            col.ColumnHasDefault = (dr.IsDBNull(1) ? false : dr.GetBoolean(1));
-            col.ColumnDefault = (dr.IsDBNull(2) ? string.Empty : dr.GetString(2).Trim());
-            col.RowGuidCol = (dr.IsDBNull(3) ? false : dr.GetInt32(3) == 378 || dr.GetInt32(3) == 282);
-            col.IsNullable = dr.GetString(4).ToLower() == "yes";
-            col.DataType = dr.GetString(5);
-            col.CharacterMaxLength = (dr.IsDBNull(6) ? 0 : dr.GetInt32(6));
-            col.NumericPrecision = (dr.IsDBNull(7) ? 0 : Convert.ToInt32(dr[7], culture));
-            col.NumericScale = (dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr[8], culture));
-            col.AutoIncrementNext = (dr.IsDBNull(9) ? 0 : Convert.ToInt64(dr[9], culture));
-            col.AutoIncrementSeed = (dr.IsDBNull(10) ? 0 : Convert.ToInt64(dr[10], culture));
-            col.AutoIncrementBy = (dr.IsDBNull(11) ? 0 : Convert.ToInt64(dr[11], culture));
+            var col = new Column
+            {
+                ColumnName = dr.GetString(0),
+                ColumnHasDefault = (dr.IsDBNull(1) ? false : dr.GetBoolean(1)),
+                ColumnDefault = (dr.IsDBNull(2) ? string.Empty : dr.GetString(2).Trim()),
+                RowGuidCol = (dr.IsDBNull(3) ? false : dr.GetInt32(3) == 378 || dr.GetInt32(3) == 282),
+                IsNullable = dr.GetString(4).ToLower() == "yes",
+                DataType = dr.GetString(5),
+                CharacterMaxLength = (dr.IsDBNull(6) ? 0 : dr.GetInt32(6)),
+                NumericPrecision = (dr.IsDBNull(7) ? 0 : Convert.ToInt32(dr[7], culture)),
+                NumericScale = (dr.IsDBNull(8) ? 0 : Convert.ToInt32(dr[8], culture)),
+                AutoIncrementNext = (dr.IsDBNull(9) ? 0 : Convert.ToInt64(dr[9], culture)),
+                AutoIncrementSeed = (dr.IsDBNull(10) ? 0 : Convert.ToInt64(dr[10], culture)),
+                AutoIncrementBy = (dr.IsDBNull(11) ? 0 : Convert.ToInt64(dr[11], culture))
+            };
             return col;
         }
 
         private Index GetIndex(ref DbDataReader dr)
         {
-            var idx = new Index();
-            idx.IndexName = dr.GetString(0);
-            idx.Unique = dr.GetBoolean(2);
-            idx.Clustered = dr.GetBoolean(3);
-            idx.OrdinalPosition = dr.GetInt32(4);
-            idx.ColumnName = dr.GetString(5);
-            idx.SortOrder = (dr.GetInt16(6) == 1 ? SortOrderEnum.ASC : SortOrderEnum.DESC);
+            var idx = new Index
+            {
+                IndexName = dr.GetString(0),
+                Unique = dr.GetBoolean(2),
+                Clustered = dr.GetBoolean(3),
+                OrdinalPosition = dr.GetInt32(4),
+                ColumnName = dr.GetString(5),
+                SortOrder = (dr.GetInt16(6) == 1 ? SortOrderEnum.ASC : SortOrderEnum.DESC)
+            };
             return idx;
         }
 
         private Constraint GetConstraint(ref DbDataReader dr)
         {
-            var cst = new Constraint();
-            cst.ConstraintTableName = dr.GetString(0);
-            cst.ConstraintName = dr.GetString(1);
-            cst.UniqueConstraintTableName = dr.GetString(2);
-            cst.UniqueConstraintName = dr.GetString(3);
-            cst.DeleteRule = dr.GetString(4);
-            cst.UpdateRule = dr.GetString(5);
+            var cst = new Constraint
+            {
+                ConstraintTableName = dr.GetString(0),
+                ConstraintName = dr.GetString(1),
+                UniqueConstraintTableName = dr.GetString(2),
+                UniqueConstraintName = dr.GetString(3),
+                DeleteRule = dr.GetString(4),
+                UpdateRule = dr.GetString(5),
 
-            cst.Columns = new ColumnList();
+                Columns = new ColumnList()
+            };
             DbCommand cmd = Connection.CreateCommand();
             cmd.CommandText = string.Format("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
                 "WHERE TABLE_NAME = '{0}' AND CONSTRAINT_NAME = '{1}' ORDER BY ORDINAL_POSITION ASC", cst.ConstraintTableName, cst.ConstraintName);

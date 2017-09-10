@@ -261,9 +261,11 @@ public class RichTextBoxHelper
                     }
 
                     MeasureOnly = false;
-                    var printDlg = new PrintDialog();
-                    printDlg.Document = doc;
-                    printDlg.AllowSomePages = true;
+                    var printDlg = new PrintDialog
+                    {
+                        Document = doc,
+                        AllowSomePages = true
+                    };
                     printDlg.PrinterSettings.FromPage = 1;
                     printDlg.PrinterSettings.MinimumPage = 1;
                     printDlg.PrinterSettings.ToPage = TotalPages;
@@ -272,10 +274,12 @@ public class RichTextBoxHelper
                     break;
                 case PrintType.PrintPreview:
                     MeasureOnly = false;
-                    var previewDlg = new PrintPreviewDialog();
-                    previewDlg.WindowState = FormWindowState.Maximized;
-                    previewDlg.Document = doc;
-                    previewDlg.ShowIcon = false;
+                    var previewDlg = new PrintPreviewDialog
+                    {
+                        WindowState = FormWindowState.Maximized,
+                        Document = doc,
+                        ShowIcon = false
+                    };
                     previewDlg.ShowDialog();
                     break;
             }
