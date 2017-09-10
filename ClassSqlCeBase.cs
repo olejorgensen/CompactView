@@ -139,13 +139,7 @@ namespace CompactView
             _databaseInfo = null;
         }
 
-        public bool IsOpen
-        {
-            get
-            {
-                return (Connection != null && Connection.State == ConnectionState.Open);
-            }
-        }
+        public bool IsOpen => Connection?.State == ConnectionState.Open;
 
         private DataTable _databaseInfo;
 
@@ -231,8 +225,7 @@ namespace CompactView
 
         protected void ResetTableNames()
         {
-            if (_tableNames != null)
-                _tableNames.Clear();
+            _tableNames?.Clear();
             _tableNames = null;
         }
 
@@ -242,8 +235,10 @@ namespace CompactView
         {
             if (Connection == null)
                 return null;
+
             if (Connection.State == ConnectionState.Closed)
                 Connection.Open();
+ 
             LastError = string.Empty;
 
             object command = assembly.CreateInstance("System.Data.SqlServerCe.SqlCeCommand", false, BindingFlags.CreateInstance, null, new object[] { null, Connection }, null, null);

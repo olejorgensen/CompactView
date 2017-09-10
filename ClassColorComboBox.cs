@@ -53,8 +53,7 @@ namespace CompactView
                     width = comboBox.Width;
                 if (comboBox.Height > height)
                     height = comboBox.Height;
-                if (buffer != null)
-                    buffer.Dispose();
+                buffer?.Dispose();
                 buffer = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             }
 
