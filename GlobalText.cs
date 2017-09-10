@@ -25,7 +25,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
-
 namespace CompactView
 {
     public static class GlobalText

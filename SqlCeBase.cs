@@ -29,25 +29,6 @@ using System.Text.RegularExpressions;
 
 namespace CompactView
 {
-    public class Version
-    {
-        public string SqlceVersion { get; private set; }
-        public string AssemblyVersion { get; private set; }
-        public UInt32 SdfCodeVersion { get; private set; }
-
-        public Version(string sqlceVersion, string assemblyVersion, UInt32 sdfCodeVersion)
-        {
-            SqlceVersion = sqlceVersion;
-            AssemblyVersion = assemblyVersion;
-            SdfCodeVersion = sdfCodeVersion;
-        }
-
-        public override string ToString()
-        {
-            return SqlceVersion;
-        }
-    }
-
     public class SqlCeBase : IDisposable
     {
 
