@@ -19,12 +19,10 @@ along with CompactView.  If not, see <http://www.gnu.org/licenses/>.
 CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
 using System;
-using System.Data;
 using System.Text;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Linq;
-using System.IO;
 using System.Data.Common;
 
 namespace CompactView

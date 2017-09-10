@@ -19,8 +19,6 @@ along with CompactView.  If not, see <http://www.gnu.org/licenses/>.
 CompactView web site <http://sourceforge.net/p/compactview/>.
 **************************************************************************/
 using System;
-using System.ComponentModel;
-using System.Data;
 using System.Windows.Forms;
 using System.IO;
 

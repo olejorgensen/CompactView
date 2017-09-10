@@ -21,12 +21,9 @@ CompactView web site <http://sourceforge.net/p/compactview/>.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using System.Data.Common;
 using System.Data;
-using System.Windows.Forms;
-using System.Xml;
 using System.IO;
 using System.Text.RegularExpressions;
 
